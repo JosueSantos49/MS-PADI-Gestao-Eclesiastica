@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+ <session-factory>
+  <!-- Configurações de Conexão com o Banco de Dados local-->
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/migreja?autoReconnect=true</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">josue123</property>        
+        <property name="connection.pool_size">1</property>        
+        <property name="current_session_context_class">thread</property> 
+        
+ <!--Configuração  de Pool de Conexão para Produção 
+  <property name="hibernate.connection.datasource">java:/comp/env/jdbc/pool</property>
+  <property name="hibernate.current_session_context_class">thread</property>
+  <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+  <property name="hibernate.jdbc.batch_size">0</property> -->
+  
+  <!-- SQL dialect -->
+  <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+  <!-- Cache de Segundo Nível -->
+  <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+  <!-- Mostra as SQLs geradas no conselo -->
+  <property name="show_sql">true</property>
+  <!-- Cria as tabelas do banco de dados (create, validate, update)-->
+  <property name="hbm2ddl.auto">validate</property>
+  <!-- Mapemamento das entidades. Executa as classes @Entity -->
+  <mapping class="br.pro.sispro.migreja.domain.Cidade"/>
+  <mapping class="br.pro.sispro.migreja.domain.Estado"/>
+  <mapping class="br.pro.sispro.migreja.domain.Fabricante"/>
+  <mapping class="br.pro.sispro.migreja.domain.Produto"/>
+  <mapping class="br.pro.sispro.migreja.domain.Pessoa"/>
+  <mapping class="br.pro.sispro.migreja.domain.Cliente"/>
+  <mapping class="br.pro.sispro.migreja.domain.Funcionario"/>
+  <mapping class="br.pro.sispro.migreja.domain.Usuario"/>
+  <mapping class="br.pro.sispro.migreja.domain.Instituicao"/>
+  <mapping class="br.pro.sispro.migreja.domain.Membro"/>
+  <mapping class="br.pro.sispro.migreja.domain.Escala"/>
+  <mapping class="br.pro.sispro.migreja.domain.Visitante"/>
+  <mapping class="br.pro.sispro.migreja.domain.Evento"/>
+  <mapping class="br.pro.sispro.migreja.domain.Curso"/>
+  <mapping class="br.pro.sispro.migreja.domain.Departamento"/>
+  <mapping class="br.pro.sispro.migreja.domain.Reuniao"/>
+  <mapping class="br.pro.sispro.migreja.domain.Dizimo"/>
+  <mapping class="br.pro.sispro.migreja.domain.Batismo"/>
+  <mapping class="br.pro.sispro.migreja.domain.Patrimonio"/>
+  <mapping class="br.pro.sispro.migreja.domain.Professor"/>
+  <mapping class="br.pro.sispro.migreja.domain.Disciplina"/>
+  <mapping class="br.pro.sispro.migreja.domain.Turma"/>
+  <mapping class="br.pro.sispro.migreja.domain.Aluno"/>
+  <mapping class="br.pro.sispro.migreja.domain.Venda"/>
+  <mapping class="br.pro.sispro.migreja.domain.ItemVenda"/>
+  <mapping class="br.pro.sispro.migreja.domain.Caixa"/>
+  <mapping class="br.pro.sispro.migreja.domain.Funcionario"/>
+  <mapping class="br.pro.sispro.migreja.domain.Movimentacao"/>
+  <mapping class="br.pro.sispro.migreja.domain.Historico"/>
+  <mapping class="br.pro.sispro.migreja.domain.Pedido"/>
+  <mapping class="br.pro.sispro.migreja.domain.UploadFile"/>
+  <mapping class="br.pro.sispro.migreja.domain.EventoCalendario"/>
+  <mapping class="br.pro.sispro.migreja.domain.Foto"/>
+  <mapping class="br.pro.sispro.migreja.domain.Arquivo"/>
+  <mapping class="br.pro.sispro.migreja.domain.PerfilInstituicao"/>
+  <mapping class="br.pro.sispro.migreja.domain.Metodologia"/>
+  <mapping class="br.pro.sispro.migreja.domain.ContaPagar"/>
+  <mapping class="br.pro.sispro.migreja.domain.ControleCaixa"/>
+  <mapping class="br.pro.sispro.migreja.domain.SaldoCaixa"/>
+  <mapping class="br.pro.sispro.migreja.domain.Temporaria"/>
+  <mapping class="br.pro.sispro.migreja.domain.Log"/>
+ </session-factory>
+</hibernate-configuration>

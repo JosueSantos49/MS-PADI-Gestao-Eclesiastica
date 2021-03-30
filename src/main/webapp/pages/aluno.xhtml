@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Aluno ou discente é o indivíduo que recebe formação e instrução de um ou vários professores para adquirir ou ampliar seus conhecimentos!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Aluno">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{alunoBean.alunos.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<!-- form listagem -->
+		<h:form id="formListagem">
+			<p:panel header="Aluno - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{alunoBean.alunos}" var="aluno" 
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+					
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{alunoBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<h:commandButton value="Exportar PDF" actionListener="#{alunoBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{alunoBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{alunoBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{alunoBean.exportarPPT}"/>
+					</f:facet>
+
+					<p:column headerText="Nome" sortBy="#{aluno.pessoa.nome}"
+						filterBy="#{aluno.pessoa.nome}">
+						<h:outputText value="#{aluno.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="CPF" sortBy="#{aluno.pessoa.cpf}"
+						filterBy="#{aluno.pessoa.cpf}">
+						<h:outputText value="#{aluno.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="RG">
+						<h:outputText value="#{aluno.pessoa.id}" />
+					</p:column>
+
+					<p:column headerText="Telefone">
+						<h:outputText value="#{aluno.pessoa.telefone}" />
+					</p:column>
+
+					<p:column headerText="E-mail">
+						<h:outputText value="#{aluno.pessoa.email}" />
+					</p:column>
+
+					<p:column headerText="Curso">
+						<h:outputText value="#{aluno.turma.curso.nomeCurso}" />
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{alunoBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="alunoSelecionado" value="#{aluno}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{alunoBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="alunoSelecionado" value="#{aluno}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{alunoBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="alunoSelecionado" value="#{aluno}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="aluno" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="aluno"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		<!-- form listagem -->
+		
+		<!-- form visualizar -->
+		<p:dialog header="Aluno - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">				
+					
+					<p:outputLabel value="CNPJ - Instituição: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.curso.instituicao.cnpj}" />
+
+					<p:outputLabel value="Departamento: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.curso.departamento.nomeDepartamento}" />
+					
+					<p:outputLabel value="Curso: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.curso.nomeCurso}" />
+					
+					<p:outputLabel value="Disciplina: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.disciplina.nomeDisciplina}" />	
+
+					<p:outputLabel value="Turno: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.turno}" />
+
+					<p:outputLabel value="Hora: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.hora}" />
+					
+					<p:outputLabel value="Professor: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.disciplina.professor.pessoa.nome}" />
+					
+					<p:outputLabel value="CPF - Professor: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.turma.disciplina.professor.pessoa.cpf}" />
+										
+					<p:outputLabel value="Aluno (a): " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.nome}" />
+					
+					<p:outputLabel value="CPF - Aluno: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.cpf}" />
+					
+					<p:outputLabel value="RG - Aluno: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.id}" />
+					
+					<p:outputLabel value="Rua: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.rua}" />
+
+					<p:outputLabel value="Numero: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.numero}" />
+
+					<p:outputLabel value="Bairro: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.bairro}" />
+
+					<p:outputLabel value="Cep: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.cep}" />
+
+					<p:outputLabel value="Cidade: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.cidade.nome}" />
+
+					<p:outputLabel value="Estado: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.cidade.estado.nome}" />
+
+					<p:outputLabel value="Complemento: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.complemento}" />
+
+					<p:outputLabel value="Telefone: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.telefone}" />
+					
+					<p:outputLabel value="E-mail: " style="font-weight:bold"/>
+					<h:outputText value="#{alunoBean.aluno.pessoa.email}" />									
+				
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form visualizar -->
+		
+		<!-- Form cadastro -->
+		<p:dialog header="Aluno - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{alunoBean.aluno.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{alunoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" 
+							itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="turma" value="Turma: " />
+					<p:selectOneMenu id="turma" filter="true"
+						value="#{alunoBean.aluno.turma}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo turma é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma turma" />
+						<f:selectItems value="#{alunoBean.turmas}" var="turma"
+							itemValue="#{turma}"
+							itemLabel="#{turma.disciplina.nomeDisciplina} - #{turma.codigo}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+				
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{alunoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+												
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />					
+					
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- Form cadastro -->
+		
+		<!-- Form editar -->
+		<p:dialog header="Aluno - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="pessoa" value="Pessoa: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{alunoBean.aluno.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{alunoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" 
+							itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="turma" value="Turma: " />
+					<p:selectOneMenu id="turma" filter="true"
+						value="#{alunoBean.aluno.turma}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo turma é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma turma" />
+						<f:selectItems value="#{alunoBean.turmas}" var="turma"
+							itemValue="#{turma}"
+							itemLabel="#{turma.disciplina.nomeDisciplina} - #{turma.codigo}" />
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+				
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{alunoBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+						
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />					
+					
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- Form editar -->
+		
+
+	</ui:define>
+</ui:decorate>

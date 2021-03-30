@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-20T02:32:26 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="01dbbd68-7e09-4665-a877-1226ceaf0026">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Migreja Data Adapter "/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="Zm90byAsMTUsMTUsMzg1ZDY4ZTYtMjhjNy00OGZiLWE5NjUtYjM4MmZhZjUyNGVjOw=="/>
+	<parameter name="codigo" class="java.lang.Long"/>
+	<parameter name="arquivo" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT * FROM foto WHERE foto.codigo = $P{codigo} LIMIT 1]]>
+	</queryString>
+	<field name="arquivo" class="java.io.InputStream"/>
+	<field name="data_hora" class="java.sql.Timestamp"/>
+	<field name="nome" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="273" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="-4" width="500" height="254" uuid="045cfe82-a784-4258-b297-eb32decacbcb"/>
+			</rectangle>
+			<image>
+				<reportElement x="379" y="85" width="93" height="105" uuid="df2b4f9f-f67b-4869-a55e-32f90556214e"/>
+				<imageExpression><![CDATA[$F{arquivo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="380" y="223" width="91" height="20" uuid="e518d007-24b0-4054-8a83-d443e47cff4c"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data_hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="381" y="198" width="91" height="20" uuid="c6fbcbd9-fbb5-4557-b16d-ae9be82a1b68"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="11" y="211" width="313" height="33" uuid="c9f1b734-dab6-47cd-8114-7531421b47dd"/>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code128B" drawText="false" checksumRequired="false">
+					<jr:codeExpression><![CDATA["1234123412341234"]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="71" y="107" width="127" height="20" uuid="b21680b1-8717-4fae-8b97-714a765c7124"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomemembro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="160" y="11" width="180" height="23" uuid="f20bacfb-9ab9-4b96-b100-5a14892537a9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Igreja Assembleia de Deus]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="131" width="123" height="16" uuid="b2ca40e7-c75f-445e-87b8-87e01da3b459"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Posição Eclesiática:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="40" width="283" height="16" uuid="02af6ca9-df21-4120-b2b3-d2bc329bfda5"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rua Belarmino Gonçalves, 07 - Seropédica / RJ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="102" y="60" width="38" height="16" uuid="ac2d1aa4-2d85-4172-b545-067e6d082ef6"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="106" width="52" height="16" uuid="1b5db15c-565b-4c8e-ad86-464bb5e8c687"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="157" width="86" height="16" uuid="fcd0a982-e45c-4225-9bdc-e14561ef9720"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Batismo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="13" y="182" width="105" height="16" uuid="3b069003-de95-438d-945f-7708d7866883"/>
+				<textElement>
+					<font fontName="Serif" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Odernação:]]></text>
+			</staticText>
+		</band>
+	</title>
+</jasperReport>

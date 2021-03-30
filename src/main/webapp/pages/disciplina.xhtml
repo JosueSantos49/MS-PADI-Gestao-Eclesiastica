@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Disciplinas (e áreas), é um ramo do conhecimento formalmente ensinado, por um método e metodologia. Para cadastrar será necessário selecionar o Professor!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Disciplina">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{disciplinaBean.disciplinas.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<h:form id="formListagem">
+			<p:panel header="Disciplina - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{disciplinaBean.disciplinas}"
+					var="disciplina" rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{disciplinaBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+
+					<p:column headerText="Professor"
+						sortBy="#{disciplina.professor.pessoa.nome}"
+						filterBy="#{disciplina.professor.pessoa.nome}">
+						<h:outputText value="#{disciplina.professor.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="CPF"
+						sortBy="#{disciplina.professor.pessoa.cpf}"
+						filterBy="#{disciplina.professor.pessoa.cpf}">
+						<h:outputText value="#{disciplina.professor.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="Disciplina">
+						<h:outputText value="#{disciplina.nomeDisciplina}" />
+					</p:column>
+
+					<p:column headerText="Carga Horária">
+						<h:outputText value="#{disciplina.caragaHoraria}" />
+					</p:column>
+
+					<p:column headerText="Início">
+						<h:outputText value="#{disciplina.inicioAula}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Término">
+						<h:outputText value="#{disciplina.terminoAula}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Data Cadastro">
+						<h:outputText value="#{disciplina.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{disciplinaBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="disciplinaSelecionada" value="#{disciplina}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{disciplinaBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="disciplinaSelecionada" value="#{disciplina}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="disciplina" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="disciplina"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+		<!-- form cadastro -->
+		<p:dialog header="Disciplina - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel value="Professor: " />
+					<p:selectOneMenu filter="true"
+						value="#{disciplinaBean.disciplina.professor}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo professor é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um professor" />
+						<f:selectItems value="#{disciplinaBean.professors}"
+							var="professor" itemValue="#{professor}"
+							itemLabel="#{professor.pessoa.nome} - #{professor.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="nomeDisciplina" value="Nome da Disciplina: " />
+					<p:inputText id="nomeDisciplina" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo nome da disciplina é obrigatório!"
+						value="#{disciplinaBean.disciplina.nomeDisciplina}" />
+
+					<p:outputLabel for="caragaHoraria" value="Carga Horária: " />
+					<p:inputText id="caragaHoraria" maxlength="5" size="10"
+						required="true"
+						requiredMessage="O campo carga horária é obrigatório!"
+						converterMessage="Informe um valor válido para o campo carga horária!"
+						validatorMessage="Informe um valor entre 0 e 1000 para o campo 'carga horária'"
+						value="#{disciplinaBean.disciplina.caragaHoraria}">
+
+						<f:validateLongRange minimum="0" maximum="1000" />
+					</p:inputText>
+
+					<p:outputLabel for="inicioAula" value="Início da Aula" />
+					<p:calendar id="inicioAula"
+						value="#{disciplinaBean.disciplina.inicioAula}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo início da aula é obrigatório!" />
+
+					<p:outputLabel for="terminoAula" value="Período de Termino" />
+					<p:calendar id="terminoAula"
+						value="#{disciplinaBean.disciplina.terminoAula}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo termino da aula é obrigatório!" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{disciplinaBean.disciplina.dataCadastro}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{disciplinaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Disciplina - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel value="Professor: " />
+					<p:selectOneMenu filter="true"
+						value="#{disciplinaBean.disciplina.professor}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo professor é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um professor" />
+						<f:selectItems value="#{disciplinaBean.professors}"
+							var="professor" itemValue="#{professor}"
+							itemLabel="#{professor.pessoa.nome} - #{professor.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="nomeDisciplina" value="Nome da Disciplina: " />
+					<p:inputText id="nomeDisciplina" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo nome da disciplina é obrigatório!"
+						value="#{disciplinaBean.disciplina.nomeDisciplina}" />
+
+					<p:outputLabel for="caragaHoraria" value="Carga Horária: " />
+					<p:inputText id="caragaHoraria" maxlength="5" size="10"
+						required="true"
+						requiredMessage="O campo carga horária é obrigatório!"
+						converterMessage="Informe um valor válido para o campo carga horária!"
+						validatorMessage="Informe um valor entre 0 e 1000 para o campo 'carga horária'"
+						value="#{disciplinaBean.disciplina.caragaHoraria}">
+
+						<f:validateLongRange minimum="0" maximum="1000" />
+					</p:inputText>
+
+					<p:outputLabel for="inicioAula" value="Início da Aula" />
+					<p:calendar id="inicioAula"
+						value="#{disciplinaBean.disciplina.inicioAula}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo início da aula é obrigatório!" />
+
+					<p:outputLabel for="terminoAula" value="Período de Termino" />
+					<p:calendar id="terminoAula"
+						value="#{disciplinaBean.disciplina.terminoAula}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo termino da aula é obrigatório!" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{disciplinaBean.disciplina.dataCadastro}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{disciplinaBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar -->
+	
+	</ui:define>
+</ui:decorate>

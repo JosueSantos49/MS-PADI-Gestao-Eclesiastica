@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+
+.imagemCentralizada {
+	/*display: block;*/
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.background {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	height: 100%;
+}
+
+.divTopo {
+	padding-bottom: 8px;
+}
+
+.msnPrincipal {
+	font-size: 20px !important;
+}
+
+/*Permitir q menu flutue*/
+.ui-layout-north {
+	z-index: 20 !important;
+	overflow: visible !important;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+	overflow: visible !important;
+}
+
+/*Definindo tamanho da fonte*/
+.ui-widget, .ui-widget .ui-widget {
+	font-size: 13px !important;
+}
+

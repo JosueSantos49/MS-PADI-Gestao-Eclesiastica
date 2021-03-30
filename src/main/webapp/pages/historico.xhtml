@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+
+		<h:form id="formulario">
+			
+			<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Para pesquisar dados sobre o produto, é necessário informar, o código do produto. Caso, exista será apresentado!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+    
+			<p:panel header="Pesquisar Produto">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="codigo" value="Código" />
+					<p:inputText id="codigo" size="14" maxlength="14" required="true"
+						requiredMessage="O campo código é obrigatório!"
+						value="#{historicoBean.produto.codigo}" />
+					<p:commandButton icon="ui-icon-search"
+						update=":mensagem :formulario:painelDados"
+						actionListener="#{historicoBean.buscar}"
+						process="@this :formulario:codigo" />
+				</h:panelGrid>
+
+				<h:panelGroup id="painelDados" layout="block">
+					<p:panelGrid columns="2"
+						rendered="${historicoBean.exibePainelDados}">
+						<p:outputLabel value="Código: " />
+						<h:outputText value="#{historicoBean.produto.codigo}" />
+
+						<p:outputLabel value="Descrição do Produto: " />
+						<h:outputText value="#{historicoBean.produto.descricao}" />
+
+						<p:outputLabel value="Quantidade: " />
+						<h:outputText value="#{historicoBean.produto.quantidade}" />
+
+						<p:outputLabel value="Preço: " />
+						<h:outputText value="#{historicoBean.produto.preco}" />
+
+						<p:outputLabel value="Fabricante: " />
+						<h:outputText
+							value="#{historicoBean.produto.fabricante.descricao}" />
+
+						<p:outputLabel for="obs" value="Observações: " />
+						<p:inputTextarea id="obs" required="true"
+							requiredMessage="O campo Observações é obrigatório" cols="50"
+							rows="5" autoResize="false"
+							value="#{historicoBean.historico.observacoes}" />
+					</p:panelGrid>
+
+					<h:panelGrid columns="1"
+						rendered="${historicoBean.exibePainelDados}">
+						<p:commandButton value="Salvar"
+							actionListener="#{historicoBean.salvar}" update=":mensagem " />
+					</h:panelGrid>
+
+				</h:panelGroup>
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

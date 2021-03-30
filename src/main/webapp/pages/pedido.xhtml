@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="O Pedido ao ser submetido contém status, que deverá ser analisado, por um responsável. Para requisitar o Pedido será necessário selecionar, o Membro e Departamento!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+
+		<h:form id="formListagem">
+			<p:panel header="Pedido - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{pedidoBean.pedidos}" var="pedido"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{pedidoBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<ui:remove>
+							<p:commandButton value="Imprimir" actionListener="#{pedidoBean.imprimir}"/>
+						</ui:remove>
+						<h:commandButton value="Exportar PDF" actionListener="#{pedidoBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{pedidoBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{pedidoBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{pedidoBean.exportarPPT}"/>	
+					</f:facet>
+					
+					<p:column headerText="Código" sortBy="#{pedido.codigo}"
+						filterBy="#{pedido.codigo}">
+						<h:outputText value="#{pedido.codigo}" />
+					</p:column>
+					
+					<p:column headerText="Assunto" sortBy="#{pedido.assunto}"
+						filterBy="#{pedido.assunto}">
+						<h:outputText value="#{pedido.assunto}" />
+					</p:column>
+
+					<p:column headerText="Descrição">
+						<h:outputText value="#{pedido.descricao}" />
+					</p:column>
+
+					<p:column headerText="Data Solicitação">
+						<h:outputText value="#{pedido.dataSolicitacao}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Status Pedido">
+						<h:outputText value="#{pedido.statusPedido}" />
+					</p:column>
+
+					<p:column headerText="Prioridade">
+						<h:outputText value="#{pedido.prioridade}" />
+					</p:column>
+
+					<p:column headerText="E-mail">
+						<h:outputText value="#{pedido.email}" />
+					</p:column>
+
+					<p:column headerText="Membro" sortBy="#{pedido.membro.pessoa.nome}"
+						filterBy="#{pedido.membro.pessoa.nome}">
+						<h:outputText value="#{pedido.membro.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Departamento">
+						<h:outputText value="#{pedido.departamento.nomeDepartamento}" />
+					</p:column>
+
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="pedido" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="pedido"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Pedido - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="membro" value="Membro: " />
+					<p:selectOneMenu id="membro" filter="true"
+						value="#{pedidoBean.pedido.membro}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo membro é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um membro" />
+						<f:selectItems value="#{pedidoBean.membros}" var="membro"
+							itemValue="#{membro}"
+							itemLabel="#{membro.pessoa.nome} - #{membro.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="departamento" value="Departamento: " />
+					<p:selectOneMenu id="departamento" filter="true"
+						value="#{pedidoBean.pedido.departamento}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo departamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um departamento" />
+						<f:selectItems value="#{pedidoBean.departamentos}"
+							var="departamento" itemValue="#{departamento}"
+							itemLabel="#{departamento.nomeDepartamento} - #{departamento.codigo}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="pessoa" value="Responsável por Avaliar " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{pedidoBean.pedido.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo responsável por avaliar é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{pedidoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="assunto" value="Assunto: " />
+					<p:inputText id="assunto" maxlength="80" size="40" required="true"
+						requiredMessage="O campo assunto é obrigatório!"
+						value="#{pedidoBean.pedido.assunto}" />
+
+					<p:outputLabel for="descricao" value="Descrição: " />
+					<p:inputText id="descricao" maxlength="80" size="40"
+						required="true" requiredMessage="O campo descrição é obrigatório!"
+						value="#{pedidoBean.pedido.descricao}" />
+
+					<p:outputLabel for="dataSolicitacao" value="Data Solicitação: " />
+					<p:calendar id="dataSolicitacao"
+						value="#{pedidoBean.pedido.dataSolicitacao}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de solicitação é obrigatório!" />
+
+					<p:outputLabel for="statusPedido" value="Status de Pedido: " />
+					<p:selectOneMenu id="statusPedido" filter="true"
+						value="#{pedidoBean.pedido.statusPedido}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo status de pedido é obrigatório!">
+						<f:selectItem itemLabel="Selecione" />
+						<f:selectItem itemValue="Pendente" itemLabel="Pendente" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="prioridade" value="Prioridade: " />
+					<p:selectOneMenu id="prioridade" filter="true"
+						value="#{pedidoBean.pedido.prioridade}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo prioridade é obrigatório!">
+						<f:selectItem itemLabel="Selecione" />
+						<f:selectItem itemValue="Baixa" itemLabel="Baixa" />
+						<f:selectItem itemValue="Media" itemLabel="Media" />
+						<f:selectItem itemValue="Alta" itemLabel="Alta" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="email" value="E-mail: " />
+					<p:inputText id="email" maxlength="80" size="40" required="true"
+						requiredMessage="O campo e-amil é obrigatório!"
+						value="#{pedidoBean.pedido.email}" />
+
+					<p:outputLabel for="obs" value="Observações: " />
+					<p:inputTextarea id="obs" rows="10" cols="80" required="true"
+						maxlength="500"
+						requiredMessage="O campo observação é obrigatório!"
+						value="#{pedidoBean.pedido.obs}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{pedidoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:decorate>

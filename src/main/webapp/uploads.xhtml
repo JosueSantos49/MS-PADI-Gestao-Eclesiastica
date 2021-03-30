@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+	<p:growl id="mensagem" showDetail="true"/>
+	
+	<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Atenção você pode gerar credêncial do membro, a partir de uma foto de arquivos do computador!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+
+	<h:form id="formListagem">
+
+		<p:commandButton value="Enviar Arquivo"
+			onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide();"
+			actionListener="#{fotoBean.abrirJanelaUpload()}" />
+
+		<p:spacer width="50" height="0" />
+
+		<p:commandButton value="Voltar" immediate="true"
+			onstart="PF('statusDialog').show()"
+			onsuccess="PF('statusDialog').hide();"
+			action="adm?faces-redirect=true" />
+
+		<p:dataTable id="tabela" value="#{fotoBean.arquivos}" var="foto"
+			emptyMessage="nenhum arquivo salvo" scrollable="true"
+			scrollHeight="400" paginator="true" rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+			<f:facet name="header">Lista de Arquivos</f:facet>
+
+			<p:column headerText="Codigo" width="50">
+				<h:outputText value="#{foto.codigo}" />
+			</p:column>
+
+			<p:column headerText="Foto">
+				<p:graphicImage value="#{imageStream.foto}" width="80" height="80">
+					<f:param name="id" value="#{foto.codigo}" />
+				</p:graphicImage>
+			</p:column>
+
+			<p:column headerText="Nome">
+				<h:outputText value="#{foto.nome}" />
+			</p:column>
+			
+			<p:column headerText="Membro">
+				<h:outputText value="#{foto.nomemembro}" />
+			</p:column>
+
+			<p:column headerText="CPF Membro" sortBy="#{foto.cpf}" filterBy="#{foto.cpf}">
+				<h:outputText value="#{foto.cpf}" />
+			</p:column>
+			
+			<p:column headerText="CNPJ" sortBy="#{foto.cnpj}" filterBy="#{foto.cnpj}">
+				<h:outputText value="#{foto.cnpj}" />
+			</p:column>
+
+			<p:column headerText="Instituição">
+				<h:outputText value="#{foto.local}" />
+			</p:column>			
+
+			<p:column headerText="Data Hora">
+				<h:outputText value="#{foto.dataHora}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+				</h:outputText>
+			</p:column>
+			
+			<p:column headerText="Carteira">
+				<p:commandButton value="Gerar" immediate="true"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide();"
+					actionListener="#{util.gerarRelatorio('carteira',foto.codigo)}"
+					oncomplete="atualizaalturatabela(110);">
+				</p:commandButton>
+			</p:column>
+			
+			<p:column headerText="Carteira Todas">	
+				<p:commandButton value="Gerar" immediate="true"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide();"
+					actionListener="#{util.gerarRelatorioTodos('carteira2')}"
+					oncomplete="atualizaalturatabela(110);">
+				</p:commandButton>
+			</p:column>
+			
+			<p:column headerText="Opções">
+			
+				<p:commandButton ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					icon="ui-icon-arrowthick-1-s">
+					<p:fileDownload value="#{fotoBean.fazerDownload(foto)}" />
+				</p:commandButton>
+				
+				<p:commandButton icon="ui-icon-trash" immediate="true"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide();"
+					actionListener="#{fotoBean.excluirArquivo(foto)}" update="@form"
+					oncomplete="atualizaalturatabela(110);">
+					<p:confirm header="Confirmação" message="Tem certeza?"
+						icon="ui-icon-alert" />
+				</p:commandButton>
+				
+				<p:commandButton icon="ui-icon-pencil"
+					actionListener="#{fotoBean.editar}"
+					update=":mensagem :dlgfoto:painel "
+					oncomplete="PF('dlgfoto').show();">
+					<p:confirm header="Confirmação" message="Deseja editar?"
+						icon="ui-icon-alert"></p:confirm>
+					<f:attribute name="fotoSelecionada" value="#{foto}" />
+					<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+		
+		<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="credencial" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="credencial"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+	</h:form>
+	
+	<p:dialog widgetVar="dlgfoto" header="Tirar Foto" footer="Gerar Credencial de Membro Por Arquivo"
+		resizable="false" maximizable="false" draggable="false"
+		appendTo="@(body)" width="850" height="300" modal="true">
+
+		<h:form id="dlgfoto">
+			<p:growl />			
+			
+			<h:panelGrid id="painel" columns="2">
+			
+			<p:outputLabel for="cnpj" value="CNPJ: " />
+				<p:inputMask mask="99.999.999/9999-99" id="cnpj" maxlength="18" size="20"
+					required="true" requiredMessage="O campo CNPJ é obrigatório!"
+					converterMessage="Informe um valor válido para o campo CNPJ!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.cnpj}">
+				</p:inputMask>
+			
+			<p:outputLabel for="local" value="Igreja Local: " />
+				<p:inputText id="local" maxlength="50" size="40" required="true"
+					requiredMessage="O campo é local obrigatório!"
+					value="#{fotoBean.foto.local}" />
+
+				<p:outputLabel for="nomemembro" value="Membro: " />
+				<p:inputText id="nomemembro" maxlength="50" size="40"
+					required="true" requiredMessage="O campo é obrigatório!"
+					value="#{fotoBean.foto.nomemembro}" />
+
+				<p:outputLabel for="posicao" value="Posição Eclesiástica: " />
+				<p:inputText id="posicao" maxlength="50" size="40"
+					value="#{fotoBean.foto.posicao}" />
+
+				<p:outputLabel for="dtbatismo" value="Data Batismo: " />
+				<p:inputMask mask="99/99/9999" id="dtbatismo" maxlength="10" size="20"
+					converterMessage="Informe um valor válido para o campo data de batismo!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.dtbatismo}"/>									
+				
+				<p:outputLabel for="dtordenacao" value="Data de Ordenação: " />
+				<p:inputMask mask="99/99/9999" id="dtordenacao" maxlength="10" size="20"
+					converterMessage="Informe um valor válido para o campo data de ordenação!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.dtordenacao}"/>
+									
+				<p:outputLabel for="dtemissao" value="Emissão em: " />
+				<p:inputMask mask="99/99/9999" id="dtemissao" maxlength="10" size="20"
+					converterMessage="Informe um valor válido para o campo data de emissão!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.dtemissao}"/>
+				
+				<p:outputLabel for="dtnascimento" value="Data de Nascimento: " />
+				<p:inputMask mask="99/99/9999" id="dtnascimento" maxlength="10" size="20"
+					converterMessage="Informe um valor válido para o campo data de nascimento!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.dtnascimento}"/>
+					
+				<p:outputLabel for="civil" value="Estado Civil: " />
+				<p:inputText id="civil" maxlength="50" size="40"
+					value="#{fotoBean.foto.civil}" />
+
+				<p:outputLabel for="filiacao" value="Filiação: " />
+				<p:inputText id="filiacao" maxlength="50" size="40"
+					value="#{fotoBean.foto.filiacao}" />
+
+				<p:outputLabel for="endereco" value="Endereço: " />
+				<p:inputText id="endereco" maxlength="50" size="40"
+					value="#{fotoBean.foto.endereco}" />			
+			
+			<p:outputLabel for="cpf" value="CPF: " />
+				<p:inputMask mask="999.999.999-99" id="cpf" maxlength="14" size="20"
+					required="true" requiredMessage="O campo CPF é obrigatório!"
+					converterMessage="Informe um valor válido para o campo CPF!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.cpf}">
+				</p:inputMask>
+				
+			<p:outputLabel for="rg" value="RG: " />
+				<p:inputMask mask="99.999.999-9" id="rg" maxlength="12" size="20"
+					required="true" requiredMessage="O campo RG é obrigatório!"
+					converterMessage="Informe um valor válido para o campo RG!"
+					validatorMessage="Informe um valor entre 0 e 1000 para o campo ''"
+					value="#{fotoBean.foto.rg}" />
+			<br/>
+			
+			<p:fileUpload mode="advanced" required="true"
+				style="margin-top: 15px;"
+				requiredMessage="É necessário o envio de pelo menos um arquivo!"
+				invalidFileMessage="Tipo de arquivo não permitido"
+				invalidSizeMessage="Tamanho excedido(500kb)"
+				uploadLabel="Salva somente a foto." fileLimit="1"
+				fileLimitMessage="Apenas um arquivo" dragDropSupport="true"
+				cancelLabel="Cancelar" label="Selecionar..." multiple="false"
+				sizeLimit="524288000" fileUploadListener="#{fotoBean.enviarArquivo}"
+				update="@form"
+				allowTypes="/(\.|\/)(gif|jpe?g|png|doc|pdf|txt|docx|bmp|xls|xlsx|ppt|pptx)$/" />
+				
+			</h:panelGrid>
+			
+			
+			<h:panelGrid columns="2">
+					
+					<ui:remove>
+					<p:commandButton value="Enviar Dados"
+						actionListener="#{fotoBean.enviarArquivo}"
+						update=":mensagem :dlgfoto:painel :formListagem:tabela"/>						
+					</ui:remove>
+					
+					<p:commandButton value="Salvar dados sem alterar a foto." icon="icon-ok"
+						actionListener="#{fotoBean.salvar}"
+						update=":mensagem :dlgfoto:painel :formListagem:tabela" />
+					
+					<p:commandButton value="Fechar" oncomplete="PF('dlgfoto').hide();" />
+			</h:panelGrid>
+			
+
+		</h:form>
+
+	</p:dialog>
+
+	<p:dialog widgetVar="statusDialog" header="Status" width="200"
+		draggable="false" closable="false" resizable="false" modal="true">  
+            Processando...
+        </p:dialog>
+
+	<h:form>
+		<p:confirmDialog global="true" closable="true" closeOnEscape="true">
+			<p:commandButton value="Sim" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="Não" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+	</h:form>
+	
+	<p:dialog draggable="false" widgetVar="dlgrelatorio" dynamic="true"
+		header="Ver Relatorio Credencial de Membro" closeOnEscape="true" closable="true"
+		width="950" height="550" modal="true" resizable="false">
+
+		<h:form id="relatorio">
+                #{util.arquivo}
+                <p:media player="pdf"
+				value="resources/fotossalvas/#{util.arquivo}.pdf" width="100%"
+				height="500" />
+
+		</h:form>
+	</p:dialog>
+	
+
+<script>
+        $(document).ready(function () {
+            atualizaalturatabela(110);
+        });
+
+
+        function start() {
+            PF('statusDialog').show();
+        }
+
+        function stop() {
+            PF('statusDialog').hide();
+        }
+
+        function atualizaalturatabela(altura) {
+            var o = $(document).height() - altura;
+            //  alert(o);
+            $('.ui-datatable-scrollable-body').css('height', o);
+        }
+    </script>
+</ui:define>
+</ui:decorate>
+

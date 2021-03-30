@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Para ser Membro deverá pertencer a uma Instituição, onde, todo Membro é uma Pessoa. Para cadastrar deverá informar a Instituição e Pessoa!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Membro">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{membroBean.membros.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<h:form id="formListagem">
+			<p:panel header="Membro - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{membroBean.membros}" var="membro"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo"
+							oncomplete="PF('dialogo').show();"
+							actionListener="#{membroBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<ui:remove>
+							<p:commandButton value="Imprimir"
+								actionListener="#{membroBean.imprimir}" />
+						</ui:remove>
+						<h:commandButton value="Exportar PDF"
+							actionListener="#{membroBean.exportarPDF}" />
+						<h:commandButton value="Ver PDF"
+							actionListener="#{membroBean.verPDF}" />
+						<h:commandButton value="Exportar DOC"
+							actionListener="#{membroBean.exportarDOC}" />
+						<h:commandButton value="Exportar PPT"
+							actionListener="#{membroBean.exportarPPT}" />
+					</f:facet>
+
+					<p:column headerText="Instituição">
+						<h:outputText value="#{membro.instituicao.razaosocial}" />
+					</p:column>
+
+					<p:column headerText="Código Membro" exportable="false">
+						<h:outputText value="#{membro.codigo}" />
+					</p:column>
+
+					<p:column headerText="Nome" sortBy="#{membro.pessoa.nome}"
+						filterBy="#{membro.pessoa.nome}">
+						<h:outputText value="#{membro.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Cpf" sortBy="#{membro.pessoa.cpf}"
+						filterBy="#{membro.pessoa.cpf}">
+						<h:outputText value="#{membro.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="Cargo Ministerial">
+						<h:outputText value="#{membro.cargoMinisterial}" />
+					</p:column>
+
+					<p:column headerText="Grau de Instrução">
+						<h:outputText value="#{membro.grauInstrucao}" />
+					</p:column>
+
+					<p:column headerText="Profissão">
+						<h:outputText value="#{membro.profissao}" />
+					</p:column>
+
+					<p:column headerText="Data de Cadastro">
+						<h:outputText value="#{membro.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{membroBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="membroSelecionado" value="#{membro}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{membroBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="membroSelecionado" value="#{membro}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{membroBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="membroSelecionado" value="#{membro}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="membros" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="membros"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<!-- form visualizar-->
+		<p:dialog header="Membro - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+				<h:panelGrid id="painelVisualizar" columns="2">
+				
+					<p:outputLabel value="Instituição: " />
+					<h:outputText value="#{membroBean.membro.instituicao.razaosocial}" />
+					
+					<p:outputLabel value="Membro: " />
+					<h:outputText value="#{membroBean.membro.pessoa.nome}" />
+					
+					<p:outputLabel value="Cargo Ministérial: " />
+					<h:outputText value="#{membroBean.membro.cargoMinisterial}" />
+					
+					<p:outputLabel value="Igreja Batismo: " />
+					<h:outputText value="#{membroBean.membro.igrejaBatismo}" />
+
+					<p:outputLabel value="Profissão: " />
+					<h:outputText value="#{membroBean.membro.profissao}" />									
+					
+					<p:outputLabel value="Grau de Instrução: " />
+					<h:outputText value="#{membroBean.membro.grauInstrucao}" />
+					
+					<p:outputLabel value="Nome da Mãe: " />
+					<h:outputText value="#{membroBean.membro.mae}" />
+					
+					<p:outputLabel value="Nome do Pai: " />
+					<h:outputText value="#{membroBean.membro.pai}" />
+					
+					<p:outputLabel value="Nome do(a) Esposo(a): " />
+					<h:outputText value="#{membroBean.membro.casamento}" />
+					
+					<p:outputLabel value="CPF: " />
+					<h:outputText value="#{membroBean.membro.pessoa.cpf}" />
+
+					<p:outputLabel value="RG: " />
+					<h:outputText value="#{membroBean.membro.pessoa.id}" />
+
+					<p:outputLabel value="Rua: " />
+					<h:outputText value="#{membroBean.membro.pessoa.rua}" />
+
+					<p:outputLabel value="Numero: " />
+					<h:outputText value="#{membroBean.membro.pessoa.numero}" />
+
+					<p:outputLabel value="Bairro: " />
+					<h:outputText value="#{membroBean.membro.pessoa.bairro}" />
+
+					<p:outputLabel value="Cep: " />
+					<h:outputText value="#{membroBean.membro.pessoa.cep}" />
+
+					<p:outputLabel value="Cidade: " />
+					<h:outputText value="#{membro.pessoa.cidade.nome}" />
+
+					<p:outputLabel value="Estado: " />
+					<h:outputText value="#{membroBean.membro.pessoa.cidade.estado.nome}" />
+
+					<p:outputLabel value="Complemento: " />
+					<h:outputText value="#{membroBean.membro.pessoa.complemento}" />
+
+					<p:outputLabel value="Celular: " />
+					<h:outputText value="#{membroBean.membro.pessoa.celular}" />
+
+					<p:outputLabel value="Telefone: " />
+					<h:outputText value="#{membroBean.membro.pessoa.telefone}" />
+
+					<p:outputLabel value="E-mail: " />
+					<h:outputText value="#{membroBean.membro.pessoa.email}" />
+					
+					<p:outputLabel value="Observação: " />
+					<p:inputTextarea rows="10" cols="80" maxlength="600" size="40" disabled="true"
+						value="#{membroBean.membro.obs}" />
+					
+					<p:outputLabel value="Data de cadastro: " />
+					<h:outputText value="#{membroBean.membro.dataCadastro}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+					
+				</h:panelGrid>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form visualizar-->
+
+		<!-- form cadastro-->
+		<p:dialog header="Membro - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{membroBean.membro.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{membroBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="pessoa" value="Pessoa: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{membroBean.membro.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{membroBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Cargo Ministérial: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{membroBean.membro.cargoMinisterial}" />
+
+					<p:outputLabel value="Igreja de Batismo: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{membroBean.membro.igrejaBatismo}" />
+
+					<p:outputLabel for="dataBatismo" value="Data de Batismo" />
+					<p:calendar id="dataBatismo"
+						value="#{membroBean.membro.dataBatismo}" size="10" locale="pt_BR" />
+
+					<p:outputLabel value="Profissão: " />
+					<p:inputText maxlength="50" size="40"
+						value="#{membroBean.membro.profissao}" />
+
+					<p:outputLabel for="grauInstrucao" value="Grau de Instrução: " />
+					<p:inputText id="grauInstrucao" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo grau de instrução é obrigatório!"
+						value="#{membroBean.membro.grauInstrucao}" />
+
+					<p:outputLabel for="mae" value="Nome da Mãe: " />
+					<p:inputText id="mae" maxlength="80" size="40" required="true"
+						requiredMessage="O campo mãe é obrigatório!"
+						value="#{membroBean.membro.mae}" />
+
+					<p:outputLabel for="pai" value="Nome do Pai: " />
+					<p:inputText id="pai" maxlength="80" size="40" required="true"
+						requiredMessage="O campo pai é obrigatório!"
+						value="#{membroBean.membro.pai}" />
+
+					<p:outputLabel for="casamento" value="Nome do(a) Esposo(a): " />
+					<p:inputText id="casamento" maxlength="80" size="40"
+						value="#{membroBean.membro.casamento}" />
+
+					<p:outputLabel value="Observação: " />
+					<p:inputText maxlength="80" size="60"
+						value="#{membroBean.membro.obs}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{membroBean.membro.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton icon="icon-ok" value="Salvar"
+						actionListener="#{membroBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro-->
+		
+		<!-- form editar -->
+		<p:dialog header="Membro - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{membroBean.membro.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{membroBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="pessoa" value="Pessoa: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{membroBean.membro.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{membroBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Cargo Ministérial: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{membroBean.membro.cargoMinisterial}" />
+
+					<p:outputLabel value="Igreja de Batismo: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{membroBean.membro.igrejaBatismo}" />
+
+					<p:outputLabel for="dataBatismo" value="Data de Batismo" />
+					<p:calendar id="dataBatismo"
+						value="#{membroBean.membro.dataBatismo}" size="10" locale="pt_BR" />
+
+					<p:outputLabel value="Profissão: " />
+					<p:inputText maxlength="50" size="40"
+						value="#{membroBean.membro.profissao}" />
+
+					<p:outputLabel for="grauInstrucao" value="Grau de Instrução: " />
+					<p:inputText id="grauInstrucao" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo grau de instrução é obrigatório!"
+						value="#{membroBean.membro.grauInstrucao}" />
+
+					<p:outputLabel for="mae" value="Nome da Mãe: " />
+					<p:inputText id="mae" maxlength="80" size="40" required="true"
+						requiredMessage="O campo mãe é obrigatório!"
+						value="#{membroBean.membro.mae}" />
+
+					<p:outputLabel for="pai" value="Nome do Pai: " />
+					<p:inputText id="pai" maxlength="80" size="40" required="true"
+						requiredMessage="O campo pai é obrigatório!"
+						value="#{membroBean.membro.pai}" />
+
+					<p:outputLabel for="casamento" value="Nome do(a) Esposo(a): " />
+					<p:inputText id="casamento" maxlength="80" size="40"
+						value="#{membroBean.membro.casamento}" />
+
+					<p:outputLabel value="Observação: " />
+					<p:inputText maxlength="80" size="60"
+						value="#{membroBean.membro.obs}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{membroBean.membro.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton icon="icon-ok" value="Editar"
+						actionListener="#{membroBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form Editar-->
+
+	</ui:define>
+</ui:decorate>

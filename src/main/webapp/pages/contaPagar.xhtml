@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Para cadastrar uma conta, será necessário informar a Instituição e informações sobre a conta Pendente de Pagamento. Após o cadastro, a conta poderá ser registrada como saída!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		<h:form id="formListagem">
+			<p:panel header="Consultar Contas a Pagar (Pendente de Pagamento)">
+			
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{contaPagarBean.contaPagars}" var="contaPagar"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<f:facet name="header">
+					
+						<p:commandButton icon="ui-icon-plus" value="Novo"
+							oncomplete="PF('dialogo').show();"
+							actionListener="#{contaPagarBean.novo}" update=":mensagem :formCadastro:painel">
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>	
+										
+							<h:commandButton value="Exportar PDF" actionListener="#{contaPagarBean.exportarPDF}"/>
+							<h:commandButton value="Ver PDF" actionListener="#{contaPagarBean.verPDF}"/>
+							<h:commandButton value="Exportar DOC" actionListener="#{contaPagarBean.exportarDOC}"/>
+							<h:commandButton value="Exportar PPT" actionListener="#{contaPagarBean.exportarPPT}"/>	
+						
+					</f:facet>
+					
+					<p:column headerText="Instituição"
+						sortBy="#{contaPagar.instituicao.razaosocial}"
+						filterBy="#{contaPagar.instituicao.razaosocial}">
+						<h:outputText value="#{contaPagar.instituicao.razaosocial}" />
+					</p:column>
+
+					<p:column headerText="Cód.">
+						<h:outputText value="#{contaPagar.codDoc}" />
+					</p:column>
+					
+					<p:column headerText="Desc.">
+						<h:outputText value="#{contaPagar.descricao}" />
+					</p:column>
+																						
+					<p:column headerText="Fornecedor">
+						<h:outputText value="#{contaPagar.fornecedor}" />
+					</p:column>
+					
+					<p:column headerText="CNPJ">
+						<h:outputText value="#{contaPagar.cnpj}" />
+					</p:column>
+										
+					<p:column headerText="Data Vencimento">
+						<h:outputText value="#{contaPagar.dataVencimento}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Valor Parcela">
+						<h:outputText value="#{contaPagar.valorParcela}" />
+					</p:column>	
+					
+					<ui:remove>
+					<p:column headerText="Forma Pgto">
+						<h:outputText value="#{contaPagar.pagamento}" />
+					</p:column>					
+					</ui:remove>
+					
+					<p:column headerText="Opções" exportable="false">
+					
+						<p:commandButton icon="ui-icon-plusthick"
+							actionListener="#{contaPagarBean.registrarPagamento}"
+							update=":mensagem :formCadastroPgto:painelPgto" oncomplete="PF('dialogoPgto').show();">
+							<p:confirm header="Confirmação" message="Deseja registrar pagamento?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="contaSelecionada" value="#{contaPagar}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{contaPagarBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir a conta?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="contaSelecionada" value="#{contaPagar}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{contaPagarBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar" oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar a conta a pagar?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="contaSelecionada" value="#{contaPagar}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{contaPagarBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="contaSelecionada" value="#{contaPagar}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="conta" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="conta"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<!-- form visualizar -->		
+		<p:dialog header="Conta a Pagar - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">
+				
+					<p:outputLabel value="CNPJ Instituição: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.instituicao.cnpj}" />
+					
+					<p:outputLabel value="Instituição: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.instituicao.razaosocial}" />
+					
+					<p:outputLabel value="CNPJ da Conta: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.cnpj}" />
+					
+					<p:outputLabel value="Código do Documento: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.codDoc}" />					
+					
+					<p:outputLabel value="Data: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.data}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+					
+					<p:outputLabel value="Data de Pagamento: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.dataPgto}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+					
+					<p:outputLabel value="Data de Vencimento: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.dataVencimento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+					
+					<p:outputLabel value="Descrição: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.descricao}" />					
+					
+					<p:outputLabel value="Fornecedor: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.fornecedor}" />					
+					
+					<p:outputLabel value="Pagamento: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.pagamento}" />					
+					
+					<p:outputLabel value="Parcela: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.parcela}" />					
+					
+					<p:outputLabel value="Valor Pagamento: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.valorPago}" />					
+					
+					<p:outputLabel value="Valor da Parcela: " style="font-weight:bold"/>
+					<h:outputText value="#{contaPagarBean.contaPagar.valorParcela}" />					
+										
+				</h:panelGrid>
+				<br/>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form visualizar -->
+
+		<!-- form cadastro -->
+		<p:dialog header="Contas a Pagar - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+				
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{contaPagarBean.contaPagar.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{contaPagarBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+										
+					<p:outputLabel for="codDoc" value="Código Documento: " />
+					<p:inputText id="codDoc" maxlength="50" size="40" required="true"
+						requiredMessage="O campo código do documento é obrigatório!"
+						value="#{contaPagarBean.contaPagar.codDoc}" />
+					
+					<p:outputLabel for="descricao" value="Descrição: " />
+					<p:inputText id="descricao" maxlength="50" size="40" required="true"
+						requiredMessage="O campo descrição é obrigatório!"
+						value="#{contaPagarBean.contaPagar.descricao}" />
+						
+					<p:outputLabel for="data" value="Data da Conta" />
+					<p:calendar id="data"
+					value="#{contaPagarBean.contaPagar.data}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data da conta é obrigatório!" />
+					
+					<p:outputLabel for="valorPago" value="Valor Pago: " />
+					<p:inputText id="valorPago" maxlength="14" size="10" required="false"
+						requiredMessage="O campo valor pago é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor pago!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor pago'"
+						value="#{contaPagarBean.contaPagar.valorPago}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+						
+					<p:outputLabel for="dataPgto" value="Data Pgto" />
+					<p:calendar id="dataPgto"
+					value="#{contaPagarBean.contaPagar.dataPgto}" size="10" locale="pt_BR"
+					required="false"
+					requiredMessage="O campo data de pagamento é obrigatório!" />
+					
+					<p:outputLabel for="fornecedor" value="Fornecedor: " />
+					<p:inputText id="fornecedor" maxlength="50" size="40" required="true"
+						requiredMessage="O campo fornecedor é obrigatório!"
+						value="#{contaPagarBean.contaPagar.fornecedor}" />
+
+					<p:outputLabel for="cnpj" value="CNPJ: " />
+					<p:inputMask mask="99.999.999/9999-99" id="cnpj" maxlength="18"
+						size="20" required="true"
+						requiredMessage="O campo CNPJ é obrigatório!"
+						converterMessage="Informe um valor válido para o campo CNPJ!"
+						validatorMessage="Informe um valor para o campo 'CNPJ'"
+						value="#{contaPagarBean.contaPagar.cnpj}" />
+						
+					<p:outputLabel for="parcela" value="Parcela: " />
+					<p:inputText id="parcela" maxlength="50" size="40" required="true"
+						requiredMessage="O campo parcela é obrigatório!"
+						value="#{contaPagarBean.contaPagar.parcela}" />
+						
+					<p:outputLabel for="dataVencimento" value="Data de Vencimento:" />
+					<p:calendar id="dataVencimento"
+					value="#{contaPagarBean.contaPagar.dataVencimento}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data de vencimento é obrigatório!" />
+					
+					<p:outputLabel for="valorParcela" value="Valor Parcela: " />
+					<p:inputText id="valorParcela" maxlength="14" size="10" required="true"
+						requiredMessage="O campo valor da Parcela é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor da parcela!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor da parcela'"
+						value="#{contaPagarBean.contaPagar.valorParcela}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+						
+					<p:outputLabel for="pagamento" value="Forma de Pagamento: " />
+					<p:selectOneMenu id="pagamento" filter="true" value="#{contaPagarBean.contaPagar.pagamento}" 
+					converter="omnifaces.SelectItemsConverter"
+						required="false" requiredMessage="O campo forma de pagamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma Forma de Pagamento" />
+						<f:selectItem itemValue="Dinheiro" itemLabel="Dinheiro" />
+						<f:selectItem itemValue="Depósito" itemLabel="Depósito" />
+						<f:selectItem itemValue="Cheque" itemLabel="Cheque" />
+					</p:selectOneMenu>
+						
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{contaPagarBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar"
+						oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Contas a Pagar - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+				
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{contaPagarBean.contaPagar.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{contaPagarBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+										
+					<p:outputLabel for="codDoc" value="Código Documento: " />
+					<p:inputText id="codDoc" maxlength="50" size="40" required="true"
+						requiredMessage="O campo código do documento é obrigatório!"
+						value="#{contaPagarBean.contaPagar.codDoc}" />
+					
+					<p:outputLabel for="descricao" value="Descrição: " />
+					<p:inputText id="descricao" maxlength="50" size="40" required="true"
+						requiredMessage="O campo descrição é obrigatório!"
+						value="#{contaPagarBean.contaPagar.descricao}" />
+						
+					<p:outputLabel for="data" value="Data da Conta" />
+					<p:calendar id="data"
+					value="#{contaPagarBean.contaPagar.data}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data da conta é obrigatório!" />
+					
+					<p:outputLabel for="valorPago" value="Valor Pago: " />
+					<p:inputText id="valorPago" maxlength="14" size="10" required="false"
+						requiredMessage="O campo valor pago é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor pago!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor pago'"
+						value="#{contaPagarBean.contaPagar.valorPago}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+						
+					<p:outputLabel for="dataPgto" value="Data Pgto" />
+					<p:calendar id="dataPgto"
+					value="#{contaPagarBean.contaPagar.dataPgto}" size="10" locale="pt_BR"
+					required="false"
+					requiredMessage="O campo data de pagamento é obrigatório!" />
+					
+					<p:outputLabel for="fornecedor" value="Fornecedor: " />
+					<p:inputText id="fornecedor" maxlength="50" size="40" required="true"
+						requiredMessage="O campo fornecedor é obrigatório!"
+						value="#{contaPagarBean.contaPagar.fornecedor}" />
+
+					<p:outputLabel for="cnpj" value="CNPJ: " />
+					<p:inputMask mask="99.999.999/9999-99" id="cnpj" maxlength="18"
+						size="20" required="true"
+						requiredMessage="O campo CNPJ é obrigatório!"
+						converterMessage="Informe um valor válido para o campo CNPJ!"
+						validatorMessage="Informe um valor para o campo 'CNPJ'"
+						value="#{contaPagarBean.contaPagar.cnpj}" />
+						
+					<p:outputLabel for="parcela" value="Parcela: " />
+					<p:inputText id="parcela" maxlength="50" size="40" required="true"
+						requiredMessage="O campo parcela é obrigatório!"
+						value="#{contaPagarBean.contaPagar.parcela}" />
+						
+					<p:outputLabel for="dataVencimento" value="Data de Vencimento:" />
+					<p:calendar id="dataVencimento"
+					value="#{contaPagarBean.contaPagar.dataVencimento}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data de vencimento é obrigatório!" />
+					
+					<p:outputLabel for="valorParcela" value="Valor Parcela: " />
+					<p:inputText id="valorParcela" maxlength="14" size="10" required="true"
+						requiredMessage="O campo valor da Parcela é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor da parcela!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor da parcela'"
+						value="#{contaPagarBean.contaPagar.valorParcela}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+						
+					<p:outputLabel for="pagamento" value="Forma de Pagamento: " />
+					<p:selectOneMenu id="pagamento" filter="true" value="#{contaPagarBean.contaPagar.pagamento}" 
+					converter="omnifaces.SelectItemsConverter"
+						required="false" requiredMessage="O campo forma de pagamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma Forma de Pagamento" />
+						<f:selectItem itemValue="Dinheiro" itemLabel="Dinheiro" />
+						<f:selectItem itemValue="Depósito" itemLabel="Depósito" />
+						<f:selectItem itemValue="Cheque" itemLabel="Cheque" />
+					</p:selectOneMenu>
+						
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{contaPagarBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar"
+						oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar -->
+		
+		<!-- form registrar pagamento -->
+		<p:dialog header="Contas a Pagar - Registrar Pagamento" widgetVar="dialogoPgto"
+			draggable="false" resizable="false" modal="true">
+			
+			<h:form id="formCadastroPgto">
+			
+			O pagamento será processado no controle do caixa.
+					
+				<h:panelGrid id="painelPgto" columns="2">
+									
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true" disabled="true"
+						value="#{contaPagarBean.contaPagar.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{contaPagarBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+					
+					<ui:remove>
+					<p:outputLabel for="controleCaixa" value="Controle Caixa: " />
+					<p:selectOneMenu id="controleCaixa" filter="true" disabled="true"
+						value="#{contaPagarBean.contaPagar.controleCaixa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo controle de caixa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um controle de caixa" />
+						<f:selectItems value="#{contaPagarBean.controleCaixas}"
+							var="controlCaixa" itemValue="#{controlCaixa}"
+							itemLabel="#{controlCaixa.codigo} - #{controlCaixa.codigo}" />
+					</p:selectOneMenu>
+					</ui:remove>
+					
+					<p:outputLabel for="codDoc" value="Código Documento: " />
+					<p:inputText id="codDoc" maxlength="50" size="40" required="true" disabled="true"
+						requiredMessage="O campo código do documento é obrigatório!"
+						value="#{contaPagarBean.contaPagar.codDoc}" />
+					
+					<p:outputLabel for="descricao" value="Descrição: " />
+					<p:inputText id="descricao" maxlength="50" size="40" required="true" disabled="true"
+						requiredMessage="O campo descrição é obrigatório!"
+						value="#{contaPagarBean.contaPagar.descricao}" />
+				
+					<p:outputLabel for="fornecedor" value="Fornecedor: " />
+					<p:inputText id="fornecedor" maxlength="50" size="40" required="true" disabled="true"
+						requiredMessage="O campo fornecedor é obrigatório!"
+						value="#{contaPagarBean.contaPagar.fornecedor}" />
+
+					<p:outputLabel for="cnpj" value="CNPJ: " />
+					<p:inputMask mask="99.999.999/9999-99" id="cnpj" maxlength="18" disabled="true"
+						size="20" required="true"
+						requiredMessage="O campo CNPJ é obrigatório!"
+						converterMessage="Informe um valor válido para o campo CNPJ!"
+						validatorMessage="Informe um valor para o campo 'CNPJ'"
+						value="#{contaPagarBean.contaPagar.cnpj}" />
+						
+					<p:outputLabel for="parcela" value="Parcela: " />
+					<p:inputText id="parcela" maxlength="50" size="40" required="false" disabled="true"
+						requiredMessage="O campo parcela é obrigatório!"
+						value="#{contaPagarBean.contaPagar.parcela}" />
+						
+					<p:outputLabel for="dataVencimento" value="Data de Vencimento:" />
+					<p:calendar id="dataVencimento"
+					value="#{contaPagarBean.contaPagar.dataVencimento}" size="10" locale="pt_BR" disabled="true"
+					required="true"
+					requiredMessage="O campo data de vencimento é obrigatório!" />
+					
+					<p:outputLabel for="valorParcela" value="Valor Parcela: " />
+					<p:inputText id="valorParcela" maxlength="14" size="10" required="false" disabled="true"
+						requiredMessage="O campo valor da Parcela é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor da parcela!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor da parcela'"
+						value="#{contaPagarBean.contaPagar.valorParcela}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+					
+					<p:outputLabel for="data" value="Data de Conta" />
+					<p:calendar id="data" disabled="true" 
+					value="#{contaPagarBean.contaPagar.data}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data da conta é obrigatório!" />
+														
+					<p:outputLabel for="pagamento" value="Forma de Pagamento: " />
+					<p:selectOneMenu id="pagamento" filter="true" value="#{contaPagarBean.contaPagar.pagamento}"
+					converter="omnifaces.SelectItemsConverter"
+						required="true" requiredMessage="O campo forma de pagamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma Forma de Pagamento" />
+						<f:selectItem itemValue="Dinheiro" itemLabel="Dinheiro" />
+						<f:selectItem itemValue="Depósito" itemLabel="Depósito" />
+						<f:selectItem itemValue="Cheque" itemLabel="Cheque" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="dataPgto" value="Data Pgto" />
+					<p:calendar id="dataPgto"
+					value="#{contaPagarBean.contaPagar.dataPgto}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data de pagamento é obrigatório!" />
+						
+					<p:outputLabel for="valorPago" value="Valor Pago: " />
+					<p:inputText id="valorPago" maxlength="14" size="10" required="true"
+						requiredMessage="O campo valor pago é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor pago!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor pago'"
+						value="#{contaPagarBean.contaPagar.valorPago}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+						
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{contaPagarBean.salvarRegistroPgto}"
+						update=":mensagem :formCadastroPgto:painelPgto :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoPgto').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form registrar pagamento -->
+
+		
+		
+	</ui:define>
+</ui:decorate>

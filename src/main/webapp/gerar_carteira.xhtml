@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+        <h:form>
+        
+        <br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Atenção você pode gerar credêncial do membro, a partir de uma foto gerada pela WebCam ou foto de arquivos do computador!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+        
+
+            <div align="center">
+
+                <p:commandButton value="Webcam"
+                                 immediate="true"
+                                 onstart="PF('statusDialog').show()" 
+                                 onsuccess="PF('statusDialog').hide();"
+                                 action="fotos?faces-redirect=true"/>
+                
+                <p:spacer width="50" height="0"/>
+
+                
+                <p:commandButton value="Upload Arquivos"
+                                 immediate="true"
+                                 onstart="PF('statusDialog').show()" 
+                                 onsuccess="PF('statusDialog').hide();"
+                                 action="uploads?faces-redirect=true"/>
+                
+                <p:spacer width="50" height="0"/>
+            </div>
+
+
+
+        </h:form>
+    </ui:define>
+</ui:decorate>
+

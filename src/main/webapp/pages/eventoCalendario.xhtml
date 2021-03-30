@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Agenda de Eventos</title>
+	<link rel="shortcut icon" href="../imagens/logo_min.png" />
+	<style type="text/css">
+		.public-event1, .public-event .fc-event-skin, .public-event a{
+		    background-color: green; 
+		    color: black;
+		    border-color: greenyellow;
+		}
+		.public-event2, .public-event .fc-event-skin, .public-event a{
+		    background-color: blue; 
+		    color: black;
+		    border-color: greenyellow;
+		}		
+	</style>
+	
+	<script type="text/javascript">
+	PrimeFaces.locales['pt'] = {  
+            closeText: 'Fechar',  
+            prevText: 'Anterior',  
+            nextText: 'Próximo',  
+            currentText: 'Começo',  
+            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],  
+            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],  
+            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],  
+            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],  
+            dayNamesMin: ['D','S','T','Q','Q','S','S'],  
+            weekHeader: 'Semana',  
+            firstDay: 1,  
+            isRTL: false,  
+            showMonthAfterYear: false,  
+            yearSuffix: '',  
+            timeOnlyTitle: 'Só Horas',  
+            timeText: 'Tempo',  
+            hourText: 'Hora',  
+            minuteText: 'Minuto',  
+            secondText: 'Segundo',  
+            currentText: 'Data Atual',  
+            ampm: false,  
+            month: 'Mês',  
+            week: 'Semana',  
+            day: 'Dia',  
+            allDayText : 'Todo Dia'  
+        };
+	</script>
+</h:head>
+<h:body>
+	<h:form id="formulario">
+		
+		<p:growl id="msgGrowl" showDetail="true" />
+		
+		<p:schedule value="#{eventoCalendarioBean.eventoModel}"
+			widgetVar="meuCalendario" id="schEvento" timeZone="America/Sao_Paulo"
+			locale="pt">
+			
+			<p:ajax event="eventSelect"
+				listener="#{eventoCalendarioBean.quandoSelecionado}"
+				update=":formulario:eventoDetalhe" oncomplete="PF('caixaDialog').show();" />
+				
+			<p:ajax event="dateSelect"
+				listener="#{eventoCalendarioBean.novo}"
+				update=":formulario:eventoDetalhe" oncomplete="PF('caixaDialog').show();" />
+				
+			<p:ajax event="eventMove"
+				listener="#{eventoCalendarioBean.quandoMover}"
+				update=":formulario:schEvento"/>
+				
+			<p:ajax event="eventResize"
+				listener="#{eventoCalendarioBean.quandoRedimensionar}"
+				update=":formulario:schEvento"/>		
+				
+		</p:schedule>
+
+		<p:dialog widgetVar="caixaDialog" header="Evento" resizable="false"	modal="true" showEffect="clip">
+			<p:outputPanel id="eventoDetalhe">
+
+				<h:panelGrid columns="2">
+				
+					<p:outputLabel value="Título" />
+					<p:inputText
+						value="#{eventoCalendarioBean.eventoCalendario.titulo}" 
+						required="true"
+						requiredMessage="O campo título é obrigatório!"/>
+
+					<p:outputLabel value="Início" />
+					<p:calendar value="#{eventoCalendarioBean.eventoCalendario.inicio}"
+						pattern="dd/MM/yyyy" />
+
+					<p:outputLabel value="Fim" />
+					<p:calendar value="#{eventoCalendarioBean.eventoCalendario.fim}"
+						pattern="dd/MM/yyyy" />
+
+					<p:outputLabel value="Status" />
+					<p:selectBooleanCheckbox
+						value="#{eventoCalendarioBean.eventoCalendario.status}" />
+
+					<p:outputLabel value="Descrição" />
+					<p:inputTextarea autoResize="true"
+						value="#{eventoCalendarioBean.eventoCalendario.descricao}" />
+				</h:panelGrid>
+
+				<p:separator />
+
+				<p:commandButton value="Salvar" actionListener="#{eventoCalendarioBean.salvar}" 
+				update="msgGrowl schEvento" oncomplete="PF('caixaDialog').hide();"/>
+
+			</p:outputPanel>
+		</p:dialog>
+	</h:form>
+</h:body>
+</html>

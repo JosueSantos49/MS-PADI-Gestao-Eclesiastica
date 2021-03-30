@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Caixa</title>
+		
+	<script type="text/javascript">
+	PrimeFaces.locales['pt'] = {  
+            closeText: 'Fechar',  
+            prevText: 'Anterior',  
+            nextText: 'Próximo',  
+            currentText: 'Começo',  
+            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],  
+            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun', 'Jul','Ago','Set','Out','Nov','Dez'],  
+            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],  
+            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],  
+            dayNamesMin: ['D','S','T','Q','Q','S','S'],  
+            weekHeader: 'Semana',  
+            firstDay: 1,  
+            isRTL: false,  
+            showMonthAfterYear: false,  
+            yearSuffix: '',  
+            timeOnlyTitle: 'Só Horas',  
+            timeText: 'Tempo',  
+            hourText: 'Hora',  
+            minuteText: 'Minuto',  
+            secondText: 'Segundo',  
+            currentText: 'Data Atual',  
+            ampm: false,  
+            month: 'Mês',  
+            week: 'Semana',  
+            day: 'Dia',  
+            allDayText : 'Todo Dia'  
+        };
+	</script>
+</h:head>
+<h:body>
+	<p:growl id="mensagem" />
+		<h:form>
+			<p:schedule value="#{caixaBean.listagemCaixas}" timeZone="America/Sao_Paulo"
+			locale="pt">
+				<p:ajax event="dateSelect" listener="#{caixaBean.novo}"
+					oncomplete="PF('dialogo').show();" 
+					update=":mensagem :formularioCadastro:painel"/>
+			</p:schedule>
+		</h:form>
+
+		<p:dialog header="Caixa" closable="true" draggable="false"
+			modal="true" resizable="false" widgetVar="dialogo">
+			<h:form id="formularioCadastro">
+				<h:panelGrid id="painel" columns="2">
+					<p:outputLabel value="Data de Abertura: " />
+					<p:inputText value="#{caixaBean.caixa.dataAbertura}" >
+						<f:convertDateTime locale="pt_BR"/>
+					</p:inputText>
+
+					<p:outputLabel value="Valor de Abertura: " />
+					<p:inputText value="#{caixaBean.caixa.valorAbertura}" >
+						<f:convertNumber locale="pt_BR"/>
+					</p:inputText>
+
+					<p:outputLabel value="Funcionário: " />
+					<p:selectOneMenu value="#{caixaBean.caixa.funcionario}"
+						converter="omnifaces.SelectItemsConverter">
+						<f:selectItem noSelectionOption="true"
+							itemLabel="Selecione um funcionário" />
+						<f:selectItems value="#{caixaBean.funcionarios}" var="funcionario" itemValue="#{funcionario}"
+							itemLabel="#{funcionario.pessoa.nome}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1">
+					<p:commandButton value="Salvar" oncomplete="PF('dialogo').hide();" 
+					actionListener="#{caixaBean.salvar}" update=":mensagem"/>
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+</h:body>
+</html>

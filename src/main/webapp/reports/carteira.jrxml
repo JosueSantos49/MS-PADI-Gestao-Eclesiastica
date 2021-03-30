@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-07-12T11:21:18 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carteira" language="groovy" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8cf4ed13-5266-4780-a7c6-c3c0121820e7">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Migreja Data Adapter "/>
+	<parameter name="arquivo" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT * FROM foto]]>
+	</queryString>
+	<field name="codigo" class="java.lang.Long"/>
+	<field name="arquivo" class="java.io.InputStream"/>
+	<field name="data_hora" class="java.sql.Timestamp"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="civil" class="java.lang.String"/>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="dtbatismo" class="java.lang.String"/>
+	<field name="dtemissao" class="java.lang.String"/>
+	<field name="dtnascimento" class="java.lang.String"/>
+	<field name="dtordenacao" class="java.lang.String"/>
+	<field name="endereco" class="java.lang.String"/>
+	<field name="filiacao" class="java.lang.String"/>
+	<field name="local" class="java.lang.String"/>
+	<field name="nomemembro" class="java.lang.String"/>
+	<field name="posicao" class="java.lang.String"/>
+	<field name="rg" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="290" height="125" uuid="7368c110-8271-4c83-8873-9d59d729517a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="71" width="290" height="20" uuid="7de00e05-f5c9-429c-994d-dd2b5fb698c1"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="71" width="290" height="20" backcolor="#00CC00" uuid="edbc0b50-e888-4562-b8ef-127296d67111"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="71" width="290" height="20" forecolor="#FFFFFF" uuid="ef82fd61-5ed4-46d1-b51b-342fcb7c140c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CREDENCIAL MEMBRO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="91" width="134" height="14" uuid="c2cdd2c7-a815-4f71-b590-bc4f68472968"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomemembro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="189" y="106" width="97" height="14" uuid="80f74f48-e483-4718-95cf-8d95e1373103"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dtemissao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="135" y="105" width="54" height="15" uuid="db716628-73ca-4d60-8115-a300cb5ae392"/>
+				<textElement>
+					<font fontName="Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Emissão:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="31" y="43" width="169" height="14" uuid="5b65b48c-135c-42bd-ae7a-64d5f01bc4e4"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="105" width="134" height="14" uuid="b285d0a6-8c09-4118-b8ab-ca8f85fc2a74"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="41" y="57" width="96" height="13" uuid="364f9c1d-1efc-48bb-8991-5e62a6a6834b"/>
+				<textElement>
+					<font fontName="Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dtbatismo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="57" width="37" height="13" uuid="14fd1582-0f93-42fb-b409-10ef1823552d"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Batismo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="43" width="29" height="14" uuid="5d2ded79-65c3-4cc7-9fd7-e1888d9a909b"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Igreja:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="135" y="91" width="54" height="15" uuid="0efe1e65-badc-4ee6-bd4e-a0b3b48e12cd"/>
+				<textElement>
+					<font fontName="Serif" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ordenação:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="189" y="92" width="97" height="14" uuid="3caa6062-811b-40e0-b87b-fd6ee06711b7"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dtordenacao}]]></textFieldExpression>
+			</textField>
+			<rectangle radius="10">
+				<reportElement x="290" y="0" width="265" height="125" uuid="b8539fb6-7472-4158-80ee-0bca5799e914"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="299" y="2" width="52" height="15" uuid="6b1a4d6c-9372-4c61-bdae-707523b6bca4"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nascimento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="29" width="43" height="15" uuid="25879e6d-c1d1-4e4d-a4c3-84aa2fc1a144"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="15" width="22" height="15" uuid="a4b6832a-0d4b-41bc-a257-12be63809301"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mãe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="42" width="22" height="15" uuid="577c8d08-f9eb-4b6c-8359-20423b31c23f"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RG:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="41" width="25" height="15" uuid="eea0f9ea-263f-4684-ac15-afd8457ee338"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CPF:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="2" width="60" height="15" uuid="4c9835f9-51b0-44d5-92c3-ae05fefdee2c"/>
+				<textElement>
+					<font fontName="Serif" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado Civil:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="455" y="41" width="97" height="15" uuid="5d599720-25c0-4b26-b034-92a557686a2c"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="321" y="42" width="109" height="15" uuid="e4102c37-3406-4386-a9de-231fb61b778c"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="2" width="72" height="15" uuid="3b89c39c-23f1-4178-9c7a-4b3ab9e5213c"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{civil}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="29" width="210" height="15" uuid="4dcbb430-8d2f-4777-8597-a634cce89fc7"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{endereco}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="321" y="15" width="231" height="15" uuid="5ef739dd-d402-419c-bb4f-88e31a157860"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{filiacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="2" width="69" height="15" uuid="731248b2-e8c5-45c5-b9c3-a839f824991d"/>
+				<textElement>
+					<font fontName="Serif" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dtnascimento}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="321" y="62" width="210" height="1" uuid="3a4872ba-f44a-4ad2-b946-96bcecb9aadd"/>
+			</line>
+			<staticText>
+				<reportElement x="364" y="63" width="126" height="11" uuid="3d9775bb-7804-4879-9195-95b1089733aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<text><![CDATA[Assinatura do Portador]]></text>
+			</staticText>
+			<line>
+				<reportElement x="321" y="78" width="210" height="1" uuid="35cbfbf5-fe34-4c11-91d3-7c05eef22940"/>
+			</line>
+			<staticText>
+				<reportElement x="351" y="79" width="159" height="11" uuid="d61e2f1a-53d3-4aaa-bb9a-2e1d52ce772f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<text><![CDATA[Pastor Presidente - Lei nº. 2994/1998]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="293" y="90" width="259" height="35" uuid="ee8970df-ee18-4017-ba53-45acdd7e383e"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Serif" size="6" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Art 1º.-Fica autorizado o ingresso, nos hospitais e demais casos de saúde da rede estadual e privada, aos pastores evangélicos e demais oficiantes de autros credos, que pretendem ministrar sua assistência religiosa aos enfermos, a qualquer hora do dia ou noite, desde que autorizado pelo visitado ou por sua família.]]></text>
+			</staticText>
+			<image>
+				<reportElement x="209" y="2" width="77" height="66" uuid="02dab865-e65c-4426-a023-6cf9524e2f7f"/>
+				<imageExpression><![CDATA[$F{arquivo}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

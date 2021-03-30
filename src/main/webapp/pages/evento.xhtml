@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+	<p:growl id="mensagem" />
+	
+	<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Organização de eventos é um processo de planejamento de um festival, cerimônia, competição ou convenção. Para cadastrar um evento será necessário informar um Departamento e Membro!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Evento">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{eventoBean.eventtos.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+	
+
+	<h:form id="formListagem">
+		<p:panel header="Evento - Listagem">
+			<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+				paginator="true" value="#{eventoBean.eventtos}" var="eventto"
+				rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+				<f:facet name="header">
+					<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+						actionListener="#{eventoBean.novo}"
+						update=":mensagem :formCadastro:painel">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					
+					<ui:remove>
+						<p:commandButton value="Imprimir" actionListener="#{eventoBean.imprimir}"/>
+					</ui:remove>
+					<h:commandButton value="Exportar PDF" actionListener="#{eventoBean.exportarPDF}"/>
+					<h:commandButton value="Ver PDF" actionListener="#{eventoBean.verPDF}"/>
+					<h:commandButton value="Exportar DOC" actionListener="#{eventoBean.exportarDOC}"/>
+					<h:commandButton value="Exportar PPT" actionListener="#{eventoBean.exportarPPT}"/>
+					
+				</f:facet>
+
+				<p:column headerText="Instituição"
+					sortBy="#{eventto.departamento.instituicao.razaosocial}"
+					filterBy="#{eventto.departamento.instituicao.razaosocial}">
+					<h:outputText
+						value="#{eventto.departamento.instituicao.razaosocial}" />
+				</p:column>
+
+				<p:column headerText="Departamento">
+					<h:outputText value="#{eventto.departamento.nomeDepartamento}" />
+				</p:column>
+
+				<p:column headerText="Evento"
+					sortBy="#{eventto.nomeEvento}" filterBy="#{eventto.nomeEvento}">
+					<h:outputText value="#{eventto.nomeEvento}" />
+				</p:column>
+
+				<p:column headerText="Data">
+					<h:outputText value="#{eventto.dataEvento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Local">
+					<h:outputText value="#{eventto.local}" />
+				</p:column>
+
+				<p:column headerText="Responsável">
+					<h:outputText value="#{eventto.responsavel}" />
+				</p:column>
+
+				<p:column headerText="Data de Cadastro">
+					<h:outputText value="#{eventto.dataCadastro}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Opções" exportable="false">
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{eventoBean.excluir}"
+						update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação" message="Deseja excluir?"
+							icon="ui-icon-alert"></p:confirm>
+						<f:attribute name="eventtoSelecionado" value="#{eventto}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{eventoBean.editar}"
+						update=":mensagem :formCadastro:painel"
+						oncomplete="PF('dialogo').show();">
+						<p:confirm header="Confirmação" message="Deseja editar?"
+							icon="ui-icon-alert"></p:confirm>
+						<f:attribute name="eventtoSelecionado" value="#{eventto}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					
+					<p:commandButton icon="ui-icon-circle-zoomout"
+						actionListener="#{eventoBean.visualizar}"
+						update=":mensagem :formCadastroVisualizar:painelVisualizar"
+						oncomplete="PF('dialogoVisualizar').show();">							
+						<f:attribute name="eventtoSelecionado" value="#{eventto}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					
+				</p:column>
+			</p:dataTable>
+			
+			<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="evento" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="evento"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="Não" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
+
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Evento - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">
+				
+					<p:outputLabel value="Instituição: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.departamento.instituicao.razaosocial}" />
+				
+					<p:outputLabel value="Nome do Departamento: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.departamento.nomeDepartamento}" />
+				
+					<p:outputLabel value="Responsável: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.responsavel}" />
+					
+					<p:outputLabel value="Descrição: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.descricao}" />
+					
+					<p:outputLabel value="Duração: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.duracao}" />
+					
+					<p:outputLabel value="Nome do Evento: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.nomeEvento}" />
+					
+					<p:outputLabel value="Data do Evento: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.dataEvento}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+
+					<p:outputLabel value="Frequência: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.frequencia}" />
+					
+					<p:outputLabel value="Horário: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.hora}" />
+					
+					<p:outputLabel value="Início: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.inicioEvento}" />
+					
+					<p:outputLabel value="Local: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.local}" />
+					
+					<p:outputLabel value="E-mail: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.email}" />			
+										
+					<p:outputLabel value="Observação: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.obs}" />
+					
+					<p:outputLabel value="Data de Cadastro: " style="font-weight:bold"/>
+					<h:outputText value="#{eventoBean.eventto.dataCadastro}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+				
+										
+				</h:panelGrid>
+				<br/>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	
+
+	<p:dialog header="Evento - Cadastro" widgetVar="dialogo"
+		draggable="false" resizable="false" modal="true">
+		<h:form id="formCadastro">
+			<h:panelGrid id="painel" columns="2">
+
+				<p:outputLabel for="departamento" value="Departamento: " />
+				<p:selectOneMenu id="departamento" filter="true"
+					value="#{eventoBean.eventto.departamento}"
+					converter="omnifaces.SelectItemsConverter" required="true"
+					requiredMessage="O campo departamento é obrigatório!">
+					<f:selectItem itemValue="" itemLabel="Selecione um departamento" />
+					<f:selectItems value="#{eventoBean.departamentos}"
+						var="departamento" itemValue="#{departamento}"
+						itemLabel="#{departamento.nomeDepartamento} - #{departamento.codigo}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="membro" value="Membro: " />
+				<p:selectOneMenu id="membro" filter="true"
+					value="#{eventoBean.eventto.membro}"
+					converter="omnifaces.SelectItemsConverter" required="true"
+					requiredMessage="O campo membro é obrigatório!">
+					<f:selectItem itemValue="" itemLabel="Selecione um membro" />
+					<f:selectItems value="#{eventoBean.membros}" var="membro"
+						itemValue="#{membro}"
+						itemLabel="#{membro.pessoa.nome} - #{membro.pessoa.cpf}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="nome" value="Nome do Evento: " />
+				<p:inputText id="nome" maxlength="80" size="40"
+					value="#{eventoBean.eventto.nomeEvento}" required="true"
+					requiredMessage="O campo nome do evento é obrigatório!" />
+
+				<p:outputLabel value="Descrição: " />
+				<p:inputText maxlength="80" size="40"
+					value="#{eventoBean.eventto.descricao}" />
+
+				<p:outputLabel for="dataEvento" value="Data do Evento" />
+				<p:calendar id="dataEvento" value="#{eventoBean.eventto.dataEvento}"
+					size="10" locale="pt_BR" required="true"
+					requiredMessage="O campo data do evento é obrigatório!" />
+
+				<p:outputLabel value="Início: " />
+				<p:selectOneMenu value="#{eventoBean.eventto.inicioEvento}">
+				<f:selectItem itemValue="" itemLabel="Selecione um início" />
+					<f:selectItem itemValue="00:00" itemLabel="00:00" />
+					<f:selectItem itemValue="00:30" itemLabel="00:30" />
+					<f:selectItem itemValue="01:00" itemLabel="01:00" />
+					<f:selectItem itemValue="02:00" itemLabel="02:00" />
+					<f:selectItem itemValue="03:00" itemLabel="03:00" />
+					<f:selectItem itemValue="04:00" itemLabel="04:00" />
+					<f:selectItem itemValue="04:30" itemLabel="04:30" />
+					<f:selectItem itemValue="05:00" itemLabel="05:00" />
+					<f:selectItem itemValue="05:30" itemLabel="05:30" />
+					<f:selectItem itemValue="06:00" itemLabel="06:00" />
+					<f:selectItem itemValue="06:30" itemLabel="06:30" />
+					<f:selectItem itemValue="07:00" itemLabel="07:00" />
+					<f:selectItem itemValue="07:30" itemLabel="07:30" />
+					<f:selectItem itemValue="08:00" itemLabel="08:00" />
+					<f:selectItem itemValue="08:30" itemLabel="08:30" />
+					<f:selectItem itemValue="09:00" itemLabel="09:00" />
+					<f:selectItem itemValue="09:30" itemLabel="09:30" />
+					<f:selectItem itemValue="10:00" itemLabel="10:00" />
+					<f:selectItem itemValue="10:30" itemLabel="10:30" />
+					<f:selectItem itemValue="11:00" itemLabel="11:00" />
+					<f:selectItem itemValue="11:30" itemLabel="11:30" />
+					<f:selectItem itemValue="12:00" itemLabel="12:00" />
+					<f:selectItem itemValue="12:30" itemLabel="12:30" />
+					<f:selectItem itemValue="13:00" itemLabel="13:00" />
+					<f:selectItem itemValue="13:30" itemLabel="13:30" />
+					<f:selectItem itemValue="14:00" itemLabel="14:00" />
+					<f:selectItem itemValue="00:00" itemLabel="14:30" />
+					<f:selectItem itemValue="00:00" itemLabel="15:00" />
+					<f:selectItem itemValue="00:00" itemLabel="15:30" />
+					<f:selectItem itemValue="00:00" itemLabel="16:00" />
+					<f:selectItem itemValue="00:00" itemLabel="16:30" />
+					<f:selectItem itemValue="00:00" itemLabel="17:00" />
+					<f:selectItem itemValue="00:00" itemLabel="17:30" />
+					<f:selectItem itemValue="00:00" itemLabel="18:00" />
+					<f:selectItem itemValue="00:00" itemLabel="18:30" />
+					<f:selectItem itemValue="00:00" itemLabel="19:00" />
+					<f:selectItem itemValue="00:00" itemLabel="19:30" />
+					<f:selectItem itemValue="00:00" itemLabel="20:00" />
+					<f:selectItem itemValue="00:00" itemLabel="20:30" />
+					<f:selectItem itemValue="00:00" itemLabel="21:00" />
+					<f:selectItem itemValue="00:00" itemLabel="21:30" />
+					<f:selectItem itemValue="00:00" itemLabel="22:00" />
+					<f:selectItem itemValue="00:00" itemLabel="22:30" />
+					<f:selectItem itemValue="00:00" itemLabel="23:00" />
+					<f:selectItem itemValue="00:00" itemLabel="23:30" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Local: " />
+				<p:inputText maxlength="80" size="40"
+					value="#{eventoBean.eventto.local}" />
+
+				<p:outputLabel value="Frequencia: " />
+				<p:selectOneMenu value="#{eventoBean.eventto.frequencia}">
+					<f:selectItem itemValue="" itemLabel="Selecione uma frequencia" />
+					<f:selectItem itemValue="Uma vez" itemLabel="Uma vez" />
+					<f:selectItem itemValue="Diariamente" itemLabel="Diariamente" />
+					<f:selectItem itemValue="Mensalmente" itemLabel="Mensalmente" />
+					<f:selectItem itemValue="Anualmente" itemLabel="Anualmente" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Responsável: " />
+				<p:inputText maxlength="80" size="40"
+					value="#{eventoBean.eventto.responsavel}" />
+					
+				<p:outputLabel for="hora" value="Hora:" />
+				<p:calendar id="hora" value="#{eventoBean.eventto.hora}" locale="pt_BR"
+						pattern="HH:mm:ss" timeOnly="true" required="true" timeZone="America/Sao_Paulo"
+						requiredMessage="O campo hora é obrigatório!" />
+
+				<p:outputLabel value="Duração: " />
+				<p:selectOneMenu value="#{eventoBean.eventto.duracao}">
+					<f:selectItem itemValue="00:00" itemLabel="0 minutos" />
+					<f:selectItem itemValue="00:30" itemLabel="30 minutos" />
+					<f:selectItem itemValue="01:00" itemLabel="1 hora" />
+					<f:selectItem itemValue="02:00" itemLabel="90 minutos" />
+					<f:selectItem itemValue="03:00" itemLabel="2 horas" />
+					<f:selectItem itemValue="04:00" itemLabel="O dia inteiro" />
+					<f:selectItem itemValue="04:30" itemLabel="Personalizado" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="E-mail: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{eventoBean.eventto.email}" placeholder="Será disparado um email na web, se ouver Internet!" validatorMessage="E-mail inválido!">
+					<f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+				</p:inputText>				
+
+				<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+				<p:calendar id="dataCadastro"
+					value="#{eventoBean.eventto.dataCadastro}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data de cadastro é obrigatório!" />
+					
+				<br/>
+				<p:inputTextarea rows="2" cols="50" value="#{eventoBean.eventto.obs}" placeholder="Observação:"
+				 completeMethod="#{inputTextareaView.completeArea}" queryDelay="750" minQueryLength="4" />
+
+			</h:panelGrid>
+			<h:panelGrid columns="2">
+				<p:commandButton value="Salvar" icon="icon-ok"
+					actionListener="#{eventoBean.salvar}"
+					update=":mensagem :formCadastro:painel :formListagem:tabela" />
+				<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+
+</ui:define>
+</ui:decorate>

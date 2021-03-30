@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+	
+<ui:define name="conteudo">
+
+	<p:growl id="mensagem" />
+	<h:form id="formulario">
+	
+		<br/>
+		<p:fieldset legend="Nota!" style="margin-bottom:8px">
+		    <h:panelGrid columns="2" cellpadding="5">
+		    	<h:outputText value="Para pesquisar dados sobre o pedido, é necessário informar, o código do pedido. Caso, exista será apresentado!" />
+			</h:panelGrid>
+		</p:fieldset>
+		
+		<p:panel header="Pesquisar Pedido Histórico">
+			<h:panelGrid columns="3">
+				<p:outputLabel for="codigo" value="Código" />
+				<p:inputText id="codigo" size="14" maxlength="14" required="true"
+					requiredMessage="O campo código é obrigatório!"
+					value="#{pedidoHistoricoBean.pedido.codigo}" />
+				<p:commandButton icon="ui-icon-search"
+					update=":mensagem :formulario:painelDados"
+					actionListener="#{pedidoHistoricoBean.buscar}" />
+			</h:panelGrid>
+
+			<h:panelGroup id="painelDados" layout="block">
+				<p:panelGrid  columns="2" rendered="${pedidoHistoricoBean.exibePainelDados}">
+					<p:outputLabel value="Código: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.codigo}" />
+
+					<p:outputLabel value="Assunto: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.assunto}" />
+
+					<p:outputLabel value="Descrição: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.descricao}" />
+
+					<p:outputLabel value="Data de Solicitação: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.dataSolicitacao}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>	
+
+					<p:outputLabel value="Status de Pedido: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.statusPedido}" />
+
+					<p:outputLabel value="Prioridade: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.prioridade}" />
+
+					<p:outputLabel value="E-mail: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.email}" />
+
+					<p:outputLabel value="Observações: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.obs}" />
+
+					<p:outputLabel value="Solicitante: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.membro.pessoa.nome}" />
+
+					<p:outputLabel value="Departamento: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.departamento.nomeDepartamento}" />
+
+					<p:outputLabel value="Avaliador: " />
+					<h:outputText value="#{pedidoHistoricoBean.pedido.pessoa.nome}" />
+
+				</p:panelGrid>
+			</h:panelGroup>
+		</p:panel>
+	</h:form>
+</ui:define>
+</ui:composition>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="A metodologia é o estudo dos métodos. Isto é, o estudo dos caminhos para se chegar a um determinado fim. Para cadastrar será necessário selecionar o Curso e Professor!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+
+		<h:form id="formListagem">
+			<p:panel header="Metodologia Educação - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{metodologiaBean.metodologias}"
+					var="metodologia" rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{metodologiaBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+												
+						<h:commandButton value="Exportar PDF" actionListener="#{metodologiaBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{metodologiaBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{metodologiaBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{metodologiaBean.exportarPPT}"/>
+						
+					</f:facet>
+
+					<p:column headerText="Curso">
+						<h:outputText value="#{metodologia.curso.nomeCurso}" />
+					</p:column>
+
+					<p:column headerText="Professor"
+						sortBy="#{metodologia.professor.pessoa.nome}"
+						filterBy="#{metodologia.professor.pessoa.nome}">
+						<h:outputText value="#{metodologia.professor.pessoa.nome}" />
+					</p:column>
+			
+					<p:column headerText="Data Cadastro">
+						<h:outputText value="#{metodologia.dataCad}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{metodologiaBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="metodologiaSelecionada"
+								value="#{metodologia}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{metodologiaBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="metodologiaSelecionada"
+								value="#{metodologia}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="metodologia" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="metodologia"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+		<!-- form cadastro -->
+		<p:dialog header="Metodologia Educação - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel value="Curso: " />
+					<p:selectOneMenu filter="true"
+						value="#{metodologiaBean.metodologia.curso}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo curso é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um curso" />
+						<f:selectItems value="#{metodologiaBean.cursos}" var="curso"
+							itemValue="#{curso}"
+							itemLabel="#{curso.nomeCurso} - #{curso.codigo}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Professor: " />
+					<p:selectOneMenu filter="true"
+						value="#{metodologiaBean.metodologia.professor}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo professor é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um professor" />
+						<f:selectItems value="#{metodologiaBean.professors}"
+							var="professor" itemValue="#{professor}"
+							itemLabel="#{professor.pessoa.nome} - #{professor.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Literatura: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.literatura}" />
+
+					<p:outputLabel value="Recursos Didáticos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.recursoDida}" />
+
+					<p:outputLabel value="Dinâmicas em Grupos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.dinamica}" />
+
+					<p:outputLabel value="Trabalhos Manuais: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.trabManual}" />
+					
+					<p:outputLabel value="Recreação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.recreacao}" />
+						
+					<p:outputLabel value="Atividade em Casa: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.ativCasa}" />
+						
+					<p:outputLabel value="Programa para os Pais: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.progPais}" placeholder="Acompanhamento em casa"/>
+						
+					<p:outputLabel value="Culto Doméstico: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.cultoDomes}" placeholder="Incentivo"/>
+						
+					<p:outputLabel value="Visitação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.visitacao}"/>
+					
+					<p:outputLabel value="Observação: " />
+					<p:inputTextarea rows="6" cols="60" maxlength="600" size="60"
+						value="#{metodologiaBean.metodologia.obs}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{metodologiaBean.metodologia.dataCad}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{metodologiaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Metodologia Educação - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel value="Curso: " />
+					<p:selectOneMenu filter="true"
+						value="#{metodologiaBean.metodologia.curso}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo curso é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um curso" />
+						<f:selectItems value="#{metodologiaBean.cursos}" var="curso"
+							itemValue="#{curso}"
+							itemLabel="#{curso.nomeCurso} - #{curso.codigo}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel value="Professor: " />
+					<p:selectOneMenu filter="true"
+						value="#{metodologiaBean.metodologia.professor}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo professor é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um professor" />
+						<f:selectItems value="#{metodologiaBean.professors}"
+							var="professor" itemValue="#{professor}"
+							itemLabel="#{professor.pessoa.nome} - #{professor.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Literatura: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.literatura}" />
+
+					<p:outputLabel value="Recursos Didáticos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.recursoDida}" />
+
+					<p:outputLabel value="Dinâmicas em Grupos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.dinamica}" />
+
+					<p:outputLabel value="Trabalhos Manuais: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.trabManual}" />
+					
+					<p:outputLabel value="Recreação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.recreacao}" />
+						
+					<p:outputLabel value="Atividade em Casa: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.ativCasa}" />
+						
+					<p:outputLabel value="Programa para os Pais: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.progPais}" placeholder="Acompanhamento em casa"/>
+						
+					<p:outputLabel value="Culto Doméstico: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.cultoDomes}" placeholder="Incentivo"/>
+						
+					<p:outputLabel value="Visitação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{metodologiaBean.metodologia.visitacao}"/>
+					
+					<p:outputLabel value="Observação: " />
+					<p:inputTextarea rows="6" cols="60" maxlength="600" size="60"
+						value="#{metodologiaBean.metodologia.obs}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{metodologiaBean.metodologia.dataCad}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{metodologiaBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar -->
+		
+	</ui:define>
+</ui:decorate>

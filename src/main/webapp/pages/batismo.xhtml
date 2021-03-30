@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="A Pessoa pode ser batizada. Para ser Candidato a Batismo será necessário responder ao questionário de Batismo!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Candidato a Batismo">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{batismoBean.batismos.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<h:form id="formListagem">
+			<p:panel header="Batismo - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{batismoBean.batismos}" var="batismo"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{batismoBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<ui:remove>
+						<p:commandButton value="Imprimir"
+							actionListener="#{batismoBean.imprimir}" />
+						</ui:remove>
+						<h:commandButton value="Exportar PDF" actionListener="#{batismoBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{batismoBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{batismoBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{batismoBean.exportarPPT}"/>
+
+					</f:facet>
+
+					<p:column headerText="Instituição">
+						<h:outputText value="#{batismo.instituicao.razaosocial}" />
+					</p:column>
+
+					<p:column headerText="Pessoa" sortBy="#{batismo.pessoa.nome}"
+						filterBy="#{batismo.pessoa.nome}">
+						<h:outputText value="#{batismo.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Cpf" sortBy="#{batismo.pessoa.cpf}"
+						filterBy="#{batismo.pessoa.cpf}">
+						<h:outputText value="#{batismo.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="Descrição">
+						<h:outputText value="#{batismo.descricao}" />
+					</p:column>
+
+					<p:column headerText="Local">
+						<h:outputText value="#{batismo.local}" />
+					</p:column>
+
+					<p:column headerText="Data de Cadastro">
+						<h:outputText value="#{batismo.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{batismoBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="batismoSelecionado" value="#{batismo}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{batismoBean.editar}"
+							update=":mensagem :formCadastro:painel"
+							oncomplete="PF('dialogo').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="batismoSelecionado" value="#{batismo}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{batismoBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="batismoSelecionado" value="#{batismo}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="batismo" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="batismo"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Batismo - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="1">
+				
+					<p:outputLabel value="Nome: " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pessoa.nome}" />
+					
+					<p:outputLabel value="CPF: " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pessoa.cpf}" />
+
+					<p:outputLabel value="Descrição: " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.descricao}" />
+
+					<p:outputLabel value="Como ficou conhecendo a Igreja? " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato1}" />
+
+					<p:outputLabel value="Você está consciente da necessidade de obedecer ao Plano de Salvação? " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato2}" />
+
+					<p:outputLabel value="Em que nome você deve ser Batizado(a) para ter seus pecados perdoados?" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato3}" />
+
+					<p:outputLabel value="Você já leu o Manual dos Artigos da Fé da Igreja? Está de acordo?" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato4}" />
+
+					<p:outputLabel value="Pretende se tornar Dízimista Fiel? " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato5}" />
+
+					<p:outputLabel value="Você conserva ainda em sua vida algum tipo de Vício?" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato6}" />
+
+					<p:outputLabel value="Você está disposto a Zelar de seu Testemunho em público?" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato7}" />
+
+					<p:outputLabel value="Há alguma área onde você se identifica e gostaria se houver oportunidade?" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.pergCandidato8}" />
+
+					<p:outputLabel value="Data de Batismo Previsto" style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.dataBastismo}" />
+
+					<p:outputLabel value="local de Batismo Previsto: " style="font-weight:bold"/>
+					<h:outputText value="#{batismoBean.batismo.local}" />
+
+					<p:outputLabel value="Observação: " style="font-weight:bold"/>
+					<p:inputTextarea rows="10" cols="80" maxlength="600" size="40" disabled="true"
+						value="#{batismoBean.batismo.obs}" />
+					
+					
+				</h:panelGrid>
+				<br/>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+
+		<p:dialog header="Batismo - Cadastro de Candidato" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{batismoBean.batismo.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{batismoBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="pessoa" value="Pessoa: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{batismoBean.batismo.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{batismoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Descrição: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{batismoBean.batismo.descricao}" />
+
+					<p:outputLabel value="Como ficou conhecendo a Igreja? " />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato1}" />
+
+					<p:outputLabel
+						value="Você está consciente da necessidade de obedecer ao Plano 
+					de Salvação? " />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato2}" />
+
+					<p:outputLabel
+						value="Em que nome você deve ser Batizado(a) para ter seus pecados perdoados?" />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato3}" />
+
+					<p:outputLabel
+						value="Você já leu o Manual dos Artigos da Fé da Igreja? Está de acordo?" />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato4}" />
+
+					<p:outputLabel value="Pretende se tornar Dízimista Fiel? " />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato5}" />
+
+					<p:outputLabel
+						value="Você conserva ainda em sua vida algum tipo de Vício?" />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato6}" />
+
+					<p:outputLabel
+						value="Você está disposto a Zelar de seu Testemunho em público?" />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato7}" />
+
+					<p:outputLabel
+						value="Há alguma área onde você se identifica e gostaria se houver oportunidade?" />
+					<p:inputText maxlength="200" size="40"
+						value="#{batismoBean.batismo.pergCandidato8}" />
+
+					<p:outputLabel for="dataBatismo" value="Data de Batismo Previsto" />
+					<p:calendar id="dataBatismo"
+						value="#{batismoBean.batismo.dataBastismo}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de batismo é obrigatório!" />
+
+					<p:outputLabel value="local de Batismo Previsto: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{batismoBean.batismo.local}" />
+
+					<p:outputLabel value="Observação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{batismoBean.batismo.obs}" />
+
+					<p:outputLabel for="membro" value="Membro Avaliador: " />
+					<p:selectOneMenu id="membro" filter="true"
+						value="#{batismoBean.batismo.membro}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo membro é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um membro" />
+						<f:selectItems value="#{batismoBean.membros}" var="membro"
+							itemValue="#{membro}"
+							itemLabel="#{membro.pessoa.nome} - #{membro.pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{batismoBean.batismo.dataCadastro}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{batismoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:decorate>

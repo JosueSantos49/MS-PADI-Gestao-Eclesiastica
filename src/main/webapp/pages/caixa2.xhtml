@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+
+		<h:form id="formListagem">
+			<p:panel header="Caixa - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{caixaBean2.caixas}" var="caixa"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<ui:remove><p:commandButton value="Imprimir" actionListener="#{eventoCalendarioBean2.imprimir}"/></ui:remove>					
+					</f:facet>
+
+					<p:column headerText="Funcionário">
+						<h:outputText value="#{caixa.funcionario.pessoa.nome}" />
+					</p:column>
+					
+					<p:column headerText="CPF-Funcionário" sortBy="#{caixa.funcionario.pessoa.cpf}"
+						filterBy="#{caixa.funcionario.pessoa.cpf}">
+						<h:outputText value="#{caixa.funcionario.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="Data Abertura" sortBy="#{caixa.dataAbertura}"
+						filterBy="#{caixa.dataAbertura}">
+						<h:outputText value="#{caixa.dataAbertura}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Data Fechamento">
+						<h:outputText value="#{caixa.dataFechamento}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Valor Abertura">
+						<h:outputText value="#{caixa.valorAbertura}" />
+					</p:column>
+					
+					<ui:remove>
+					<p:column headerText="Status">
+						<h:outputText value="#{eventoCalendario.status}" 
+							converter="#{converterBooleanString}">
+						</h:outputText>
+					</p:column>
+					</ui:remove>					
+
+					<p:column headerText="Opções" exportable="false">
+						
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{caixaBean2.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir o evento?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="caixaSelecionado" value="#{caixa}" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{caixaBean2.editar}"
+							update=":mensagem :formCadastro:painel"
+							oncomplete="PF('dialogo').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="caixaSelecionado" value="#{caixa}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="evento_calendario" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="evento_calendario"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<p:dialog header="Caixa - Editar" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+					
+					<p:outputLabel value="Cód. Funcionário: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{caixaBean2.caixa.funcionario.codigo}" disabled="true" />
+
+					<p:outputLabel for="dataAbertura" value="Data de Abertura" />
+					<p:calendar id="dataAbertura"
+						value="#{caixaBean2.caixa.dataAbertura}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data é obrigatório!"
+						disabled="true" />
+							
+					<p:outputLabel for="dataFechamento" value="Data de Fechamento" />
+					<p:calendar id="dataFechamento"
+						value="#{caixaBean2.caixa.dataFechamento}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data é obrigatório!" />
+						
+					<p:outputLabel value="Valor Abertura: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{caixaBean2.caixa.valorAbertura}" disabled="true"/>
+					
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{caixaBean2.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+
+	</ui:define>
+</ui:decorate>

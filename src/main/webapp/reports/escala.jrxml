@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-09-05T10:31:40 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="escala" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c368610e-5bee-4e75-8f1e-ecda64380534">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="47"/>
+	<property name="ireport.y" value="451"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="bWlncmVqYS5lc2NhbGEgQVMgLDE5OCwyOSwxMWQ2YTBmMS00NmM4LTRkZWQtYjYwNy1hMmUyOTVl&#xA;YWVmNjQ7bWlncmVqYS5wZXNzb2EgQVMgLDYyNiwyNiw3YWJlOGE0OS1iMGEyLTQxYTItYTUyZS01&#xA;YTI0OGRkYzQxM2M7bWlncmVqYS5tZW1icm8gQVMgLDM3MSwyNixiOGM3NGI1Yi0wMzk3LTRmZGIt&#xA;ODc4Ni1iNmYwNWNhY2ZiMGY7"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Migreja Data Adapter "/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#F0EFEF"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="PieChartDataset" uuid="21b70311-b650-4678-a39c-887917366bf0"/>
+	<field name="pessoa" class="br.pro.sispro.migreja.domain.Pessoa"/>
+	<field name="atividade" class="java.lang.String"/>
+	<field name="funcao" class="java.lang.String"/>
+	<field name="hora" class="java.sql.Timestamp"/>
+	<field name="dataCadastro" class="java.sql.Date"/>
+	<field name="inicio" class="java.sql.Date"/>
+	<field name="fim" class="java.sql.Date"/>
+	<background>
+		<band height="555" splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="94" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="0" width="822" height="65" forecolor="#006699" backcolor="#006699" uuid="83f5e806-cc04-4161-87a9-07633f604bc1"/>
+				<staticText>
+					<reportElement style="Title" x="20" y="0" width="789" height="65" uuid="f5cd9ee0-5caa-4e48-8946-c7e84d82a845"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Serif" size="24" isBold="false"/>
+					</textElement>
+					<text><![CDATA[RELATÓRIO DE ESCALA DE MEMBROS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="630" y="40" width="180" height="20" forecolor="#FFFFFF" uuid="8a015a49-3cc6-4650-aafe-3445e2478263"/>
+					<textElement textAlignment="Right">
+						<font fontName="Serif" size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MS-PADI]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="2a3d298d-90eb-4db1-919a-c9b2ed28c222"/>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="-227" y="0" width="127" height="14" forecolor="#000000" uuid="f1aed983-757e-4f6a-aa7d-1fa8cb032284"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[NOME]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="-97" y="0" width="107" height="14" forecolor="#000000" uuid="6e7f1144-9816-4e34-aef2-8ddc2df7409f"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CPF]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="10" y="0" width="123" height="14" forecolor="#000000" uuid="317cd2d9-ac4e-4472-9b31-925fa059fa9a"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[ATIVIDADE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="133" y="0" width="111" height="14" forecolor="#000000" uuid="91fe8c51-2cfa-4b96-a608-6194ec59cf30"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FUNÇÃO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="253" y="0" width="69" height="14" forecolor="#000000" uuid="3308a6bd-c21f-4a22-b001-73427b34e531"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[HORA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="322" y="0" width="84" height="14" forecolor="#000000" uuid="8eca9f6b-b09d-4a16-94ed-d6e9d0cddde4"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[INÍCIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="493" y="0" width="82" height="14" forecolor="#000000" uuid="13d5747f-07e8-4509-aa45-43dee0e3f793"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[DT CADASTRO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement style="Column header" positionType="Float" x="406" y="0" width="84" height="14" forecolor="#000000" uuid="ea3fa251-3067-4902-8971-2aa14d4873fa"/>
+					<textElement>
+						<font fontName="Serif" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FIM]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="14" width="802" height="1" uuid="ad4e998c-7071-4467-b7fa-4441cc53d3f6"/>
+			</line>
+			<frame>
+				<reportElement x="227" y="0" width="575" height="14" uuid="822bafe9-34ee-4b4f-aa76-3eae029c4911"/>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="-227" y="0" width="127" height="14" uuid="b56961df-e790-40eb-8f26-bd89e7313ab5"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pessoa}.getNome()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="-97" y="0" width="107" height="14" uuid="3f3a4445-412f-43a7-a0e2-0366a0ca9db5"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{pessoa}.getCpf()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="10" y="0" width="123" height="14" uuid="21373ef1-216d-4e01-aa81-a80ff91466d2"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{atividade}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="133" y="0" width="111" height="14" uuid="8f396acb-97bc-4c2f-a5c6-b0f84eea25d9"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{funcao}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="253" y="0" width="69" height="14" uuid="a40228e0-60f7-4ac5-9988-a1d2c00a4bb3"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="322" y="0" width="84" height="14" uuid="6b9917c0-2504-4009-b5f0-4c224c1067d3"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{inicio} != null ? new String(new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{inicio}).toString()) : new String("------"))]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="493" y="0" width="82" height="14" uuid="fa270878-41bd-4ed3-8031-1d53944e7853"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dataCadastro}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement style="Detail" positionType="Float" x="406" y="0" width="84" height="14" uuid="37323eb6-b664-481c-926f-ad0811a66f70"/>
+					<textElement>
+						<font fontName="Serif" size="11" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{fim} != null ? new String(new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{fim}).toString()) : new String("------"))]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="7" splitType="Stretch">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1" uuid="c23ffbf7-1928-41f8-ade3-5930d9a4871d"/>
+				<graphicElement>
+					<pen lineWidth="0.5" lineColor="#999999"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<frame>
+				<reportElement mode="Opaque" x="2" y="0" width="800" height="16" forecolor="#D0B48E" backcolor="#006699" uuid="6f4fe8ef-88ca-4d5d-b46a-054826bb7893"/>
+				<textField evaluationTime="Report">
+					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#FFFFFF" uuid="970781d6-87a0-4d3d-a07b-5ae173a1317a"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Serif" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#FFFFFF" uuid="42664b34-c87b-42f8-911b-bd9c2ab9111e"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Serif" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+				</textField>
+				<textField pattern="EEEEE dd MMMMM yyyy">
+					<reportElement style="Column header" x="2" y="0" width="197" height="16" forecolor="#FFFFFF" uuid="06b3d6e8-b4a5-4251-b1fb-f640689933e8"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Serif" size="12" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

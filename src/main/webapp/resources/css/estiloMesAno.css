@@ -1,0 +1,5 @@
+@CHARSET "UTF-8";
+
+.ui-datepicker-inline .ui-datepicker-calendar{
+  display: none;        
+}

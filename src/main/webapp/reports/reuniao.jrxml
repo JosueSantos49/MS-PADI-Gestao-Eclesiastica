@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-06-08T11:56:05 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reuniao" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f0f78d01-d4bc-4386-acb3-f0c7dd6ae082">
+	<property name="com.jaspersoft.studio.data.sql.tables" value="bWlncmVqYS5kZXBhcnRhbWVudG8gQVMgLDU4MSwzOSw2OWQ2ZDM0YS1lNjZhLTRiNDEtYjU0Yy05&#xA;OTFiNDNhNDIwZjU7bWlncmVqYS5yZXVuaWFvIEFTICwxOTIsNDksNjIzMGU2MzYtNWJiMi00NWJh&#xA;LTkzMzUtZDk1ZWU5OTZlYWEwOw=="/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Migreja Data Adapter "/>
+	<field name="departamento" class="br.pro.sispro.migreja.domain.Departamento"/>
+	<field name="assunto" class="java.lang.String"/>
+	<field name="dataReuniao" class="java.sql.Date"/>
+	<field name="local" class="java.lang.String"/>
+	<field name="projeto" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="c7dd5b74-bdb8-45f2-9652-b6e2c5dea1fe"/>
+				<staticText>
+					<reportElement x="20" y="20" width="395" height="43" forecolor="#FFFFFF" uuid="08af5d31-7c09-4900-87e6-4bc0ceff6bf4"/>
+					<textElement>
+						<font fontName="Serif" size="26" isBold="true"/>
+					</textElement>
+					<text><![CDATA[RELATÓRIO DE REUNIÃO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="6f8da337-0c62-479a-b74c-9c2a1ed5a21c"/>
+					<textElement textAlignment="Right">
+						<font fontName="Serif" size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MS-PADI]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<line>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="d583db7c-6166-4ccf-a9c5-c971aedae4b4"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="185" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c98b6567-07ff-463b-8ead-02dc35808f5c"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="185" y="0" width="76" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c117e49c-6130-4d55-99e5-16881227219e"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ASSUNTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="261" y="0" width="79" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="d2bc9c49-e60f-4c8c-8235-92f816ec7dcb"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="340" y="0" width="63" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="61e13f10-393d-4061-bc34-b3ac9d6f61ee"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="406" y="0" width="79" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="02a18ce3-2b1d-4581-b5c1-ca3c622260e9"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROJETO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="485" y="0" width="70" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="7b951eba-6818-486f-8e7a-6be0b6517e7a"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E-MAIL]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="22265b34-8d1c-4f30-ae98-31fc6361b993"/>
+			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="185" height="20" uuid="af3343d3-7c8e-4ff0-9056-cd09137efff9"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{departamento}.getNomeDepartamento()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="185" y="0" width="76" height="20" uuid="a99818cb-9da6-41c0-9b53-5122146ef9e9"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{assunto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="261" y="0" width="79" height="20" uuid="6fc8bfd7-9d83-4534-8622-a6b5c771100a"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataReuniao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="340" y="0" width="63" height="20" uuid="6d4ac087-4dcf-476c-a84d-842b1b286278"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="406" y="0" width="79" height="20" uuid="a4b1c67c-bd59-43e6-80c9-3f62ddd883b3"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{projeto}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="485" y="0" width="70" height="20" uuid="af36d239-38ca-46d2-ab15-9e74e78d730e"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="7bfb47d5-9da9-4b5e-816d-84b390d1965c"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="468d39a5-d1e6-405d-9aad-81dfa1268257"/>
+				<textElement>
+					<font fontName="Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="4" width="100" height="13" uuid="2cea5b25-3559-416f-b318-e20ef39c1cd0"/>
+				<textElement>
+					<font fontName="Serif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

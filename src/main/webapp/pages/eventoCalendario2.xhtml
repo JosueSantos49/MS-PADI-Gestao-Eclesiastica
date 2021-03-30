@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Aqui você pode excluir o registro do Calendário de Evento. Para editar um Evento do Calendário, basta clicar no evento e executar a modificação!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		
+
+		<h:form id="formListagem">
+			<p:panel header="Evento Calendarios - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{eventoCalendarioBean2.eventoCalendarios}" var="eventoCalendario"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<ui:remove><p:commandButton value="Imprimir" actionListener="#{eventoCalendarioBean2.imprimir}"/></ui:remove>
+							
+						<h:commandButton value="Exportar PDF" actionListener="#{eventoCalendarioBean2.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{eventoCalendarioBean2.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{eventoCalendarioBean2.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{eventoCalendarioBean2.exportarPPT}"/>				
+					</f:facet>
+
+					<p:column headerText="Título" sortBy="#{eventoCalendario.titulo}"
+						filterBy="#{eventoCalendario.titulo}">
+						<h:outputText value="#{eventoCalendario.titulo}" />
+					</p:column>
+
+					<p:column headerText="Início" sortBy="#{eventoCalendario.inicio}"
+						filterBy="#{eventoCalendario.inicio}">
+						<h:outputText value="#{eventoCalendario.inicio}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Fim" sortBy="#{eventoCalendario.fim}"
+						filterBy="#{eventoCalendario.fim}">
+						<h:outputText value="#{eventoCalendario.fim}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Status">
+						<h:outputText value="#{eventoCalendario.status}" 
+							converter="#{converterBooleanString}">
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Descrição">
+						<h:outputText value="#{eventoCalendario.descricao}" />
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{eventoCalendarioBean2.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir o evento?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="eventoCalendarioSelecionado" value="#{eventoCalendario}" />
+						</p:commandButton>
+
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="evento_calendario" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="evento_calendario"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+
+	</ui:define>
+</ui:decorate>

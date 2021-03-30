@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<h:form id="formulario">
+		
+		<br/>
+		<p:fieldset legend="Nota!" style="margin-bottom:8px">
+		    <h:panelGrid columns="2" cellpadding="5">
+		    	<h:outputText value="Para pesquisar dados sobre o membro, é necessário informar, o código do membro Caso, exista será apresentado!" />
+			</h:panelGrid>
+		</p:fieldset>
+		
+			<p:panel
+				header="Pesquisar Membro Histórico">
+				<h:panelGrid columns="3">
+					<p:outputLabel for="codigo" value="Código" />
+					<p:inputText id="codigo" size="14" maxlength="14" required="true"
+						requiredMessage="O campo código é obrigatório!"
+						value="#{carteiraMembroBean.membro.codigo}" />
+					<p:commandButton icon="ui-icon-search"
+						update=":mensagem :formulario:painelDados"
+						actionListener="#{carteiraMembroBean.buscar}" />
+				</h:panelGrid>
+				<br/>
+				<h:panelGroup id="painelDados" layout="block">
+					<p:panelGrid columns="2" 
+						rendered="${carteiraMembroBean.exibirPainelDados}">
+
+						<p:outputLabel value="Instituição: " />
+						<h:outputText size="30"
+							value="#{carteiraMembroBean.membro.instituicao.razaosocial}" />
+
+						<p:outputLabel value="CNPJ: " />
+						<h:outputText size="20" value="#{carteiraMembroBean.membro.instituicao.cnpj}" />						
+
+						<p:outputLabel value="Nome: " />
+						<h:outputText size="30" value="#{carteiraMembroBean.membro.pessoa.nome}" />
+
+						<p:outputLabel value="Ministérial:" />
+						<h:outputText size="30"
+							value="#{carteiraMembroBean.membro.cargoMinisterial}" />
+
+						<p:outputLabel value="Exp: " />
+						<h:outputText value="#{carteiraMembroBean.membro.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+
+						<p:outputLabel value="Mãe: " />
+						<h:outputText size="30" value="#{carteiraMembroBean.membro.mae}" />
+
+						<p:outputLabel  value="Pai: " />
+						<h:outputText size="30" value="#{carteiraMembroBean.membro.pai}" />
+
+						<p:outputLabel value="Estado Civil: " />
+						<h:outputText value="#{carteiraMembroBean.membro.casamento}" />
+
+						<p:outputLabel value="Estado: " />
+						<h:outputText
+							value="#{carteiraMembroBean.membro.pessoa.cidade.estado.nome}" />
+
+						<p:outputLabel value="RG: " />
+						<h:outputText value="#{carteiraMembroBean.membro.pessoa.id}" />
+						
+						<p:outputLabel value="Código: " />
+						<h:outputText value="#{carteiraMembroBean.membro.codigo}" />
+						
+						<p:outputLabel value="Observação: " />
+						<h:outputText value="#{carteiraMembroBean.membro.obs}" />
+
+					</p:panelGrid>
+				</h:panelGroup>
+				<br/><br/>
+								
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

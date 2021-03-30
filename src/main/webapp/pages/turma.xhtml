@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Turma é agrupamentos de certos tipos de pessoas para cursar uma disciplina, que pertence ao Curso. Para cadastrar será necessário selecionar a Disciplina e Curso!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Turma">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{turmaBean.turmas.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<h:form id="formListagem">
+			<p:panel header="Turma - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{turmaBean.turmas}" var="turma" 
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{turmaBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<h:commandButton value="Exportar PDF" actionListener="#{turmaBean.exportarPDF}" />
+						<h:commandButton value="Ver PDF" actionListener="#{turmaBean.verPDF}" />
+						<h:commandButton value="Exportar DOC" actionListener="#{turmaBean.exportarDOC}" />
+						<h:commandButton value="Exportar PPT" actionListener="#{turmaBean.exportarPPT}" />
+					</f:facet>
+
+					<p:column headerText="CNPJ-Intituição"
+						sortBy="#{turma.curso.instituicao.cnpj}"
+						filterBy="#{turma.curso.instituicao.cnpj}">
+						<h:outputText value="#{turma.curso.instituicao.cnpj}" />
+					</p:column>
+
+					<p:column headerText="Disciplina"
+						sortBy="#{turma.disciplina.nomeDisciplina}"
+						filterBy="#{turma.disciplina.nomeDisciplina}">
+						<h:outputText value="#{turma.disciplina.nomeDisciplina}" />
+					</p:column>
+
+					<p:column headerText="CPF-Professor"
+						sortBy="#{turma.disciplina.professor.pessoa.cpf}"
+						filterBy="#{turma.disciplina.professor.pessoa.cpf}">
+						<h:outputText value="#{turma.disciplina.professor.pessoa.cpf}" />
+					</p:column>
+
+					<p:column headerText="Curso"
+						sortBy="#{turma.curso.nomeCurso}"
+						filterBy="#{turma.curso.nomeCurso}">
+						<h:outputText value="#{turma.curso.nomeCurso}" />
+					</p:column>
+
+					<p:column headerText="Departamento">
+						<h:outputText value="#{turma.curso.departamento.nomeDepartamento}" />
+					</p:column>
+
+					<p:column headerText="Turno">
+						<h:outputText value="#{turma.turno}" />
+					</p:column>
+
+					<p:column headerText="Hora">
+						<h:outputText value="#{turma.hora}" />
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+					
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{turmaBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="turmaSelecionada" value="#{turma}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{turmaBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="turmaSelecionada" value="#{turma}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{turmaBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="turmaSelecionada" value="#{turma}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="turma" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="turma"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<!-- form visualizar -->
+		<p:dialog header="Turma - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">				
+					
+					<p:outputLabel value="CNPJ - Instituição: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.curso.instituicao.cnpj}" />
+
+					<p:outputLabel value="Departamento: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.curso.departamento.nomeDepartamento}" />
+					
+					<p:outputLabel value="Curso: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.curso.nomeCurso}" />
+					
+					<p:outputLabel value="Disciplina: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.disciplina.nomeDisciplina}" />	
+
+					<p:outputLabel value="Turno: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.turno}" />
+
+					<p:outputLabel value="Hora: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.hora}" />
+					
+					<p:outputLabel value="Professor: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.disciplina.professor.pessoa.nome}" />
+					
+					<p:outputLabel value="CPF - Professor: " style="font-weight:bold"/>
+					<h:outputText value="#{turmaBean.turma.disciplina.professor.pessoa.cpf}" />
+										
+				</h:panelGrid>
+				
+				<br/>
+				
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form visualizar -->
+		
+		<!-- form cadastro -->
+		<p:dialog header="Turma - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="disciplina" value="Disciplina: " />
+					<p:selectOneMenu id="disciplina" filter="true"
+						value="#{turmaBean.turma.disciplina}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo disciplina é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma disciplina" />
+						<f:selectItems value="#{turmaBean.disciplinas}" var="disciplina"
+							itemValue="#{disciplina}"
+							itemLabel="#{disciplina.nomeDisciplina} - #{disciplina.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Curso: " />
+					<p:selectOneMenu filter="true" value="#{turmaBean.turma.curso}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo curso é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um curso" />
+						<f:selectItems value="#{turmaBean.cursos}" var="curso"
+							itemValue="#{curso}"
+							itemLabel="#{curso.nomeCurso} - #{curso.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Turno: " />
+					<p:selectOneRadio value="#{turmaBean.turma.turno}" required="true"
+						requiredMessage="O campo turno é obrigatório!">
+						<f:selectItem itemValue="Manhã" itemLabel="Manhã" />
+						<f:selectItem itemValue="Tarde" itemLabel="Tarde" />
+						<f:selectItem itemValue="Noite" itemLabel="Noite" />
+					</p:selectOneRadio>
+
+					<p:outputLabel for="hora" value="Hora: " />
+					<p:inputText id="hora" maxlength="80" size="40" required="true"
+						requiredMessage="O campo hora é obrigatório!"
+						value="#{turmaBean.turma.hora}" />
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{turmaBean.turma.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+					
+					<ui:remove>
+					<p:outputLabel value="Arquivo:"/>
+					<h:panelGroup id="upload-group">
+						<p:fileUpload allowTypes="/(\.|\/)(jpe?g|png|pdf)$/"
+						invalidFileMessage="Formato de arquivo inválido"
+						label="Selecione um arquivo..."
+						auto="true" multiple="false"
+						fileUploadListener="#{turmaBean.fileUploadHandler}"
+						update="arquivo-selecionado"/>
+						<h:outputText value="#{turmaBean.arquivoSelecionado}"
+							id="arquivo-selecionado"/>
+					</h:panelGroup>
+					</ui:remove>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{turmaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Turma - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="disciplina" value="Disciplina: " />
+					<p:selectOneMenu id="disciplina" filter="true"
+						value="#{turmaBean.turma.disciplina}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo disciplina é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma disciplina" />
+						<f:selectItems value="#{turmaBean.disciplinas}" var="disciplina"
+							itemValue="#{disciplina}"
+							itemLabel="#{disciplina.nomeDisciplina} - #{disciplina.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Curso: " />
+					<p:selectOneMenu filter="true" value="#{turmaBean.turma.curso}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo curso é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um curso" />
+						<f:selectItems value="#{turmaBean.cursos}" var="curso"
+							itemValue="#{curso}"
+							itemLabel="#{curso.nomeCurso} - #{curso.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Turno: " />
+					<p:selectOneRadio value="#{turmaBean.turma.turno}" required="true"
+						requiredMessage="O campo turno é obrigatório!">
+						<f:selectItem itemValue="Manhã" itemLabel="Manhã" />
+						<f:selectItem itemValue="Tarde" itemLabel="Tarde" />
+						<f:selectItem itemValue="Noite" itemLabel="Noite" />
+					</p:selectOneRadio>
+
+					<p:outputLabel for="hora" value="Hora: " />
+					<p:inputText id="hora" maxlength="80" size="40" required="true"
+						requiredMessage="O campo hora é obrigatório!"
+						value="#{turmaBean.turma.hora}" />
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{turmaBean.turma.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+					
+					<ui:remove>
+					<p:outputLabel value="Arquivo:"/>
+					<h:panelGroup id="upload-group">
+						<p:fileUpload allowTypes="/(\.|\/)(jpe?g|png|pdf)$/"
+						invalidFileMessage="Formato de arquivo inválido"
+						label="Selecione um arquivo..."
+						auto="true" multiple="false"
+						fileUploadListener="#{turmaBean.fileUploadHandler}"
+						update="arquivo-selecionado"/>
+						<h:outputText value="#{turmaBean.arquivoSelecionado}"
+							id="arquivo-selecionado"/>
+					</h:panelGroup>
+					</ui:remove>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{turmaBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar -->
+	
+	</ui:define>
+</ui:decorate>

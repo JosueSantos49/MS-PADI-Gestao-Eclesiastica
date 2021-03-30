@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+	<p:growl id="mensagem" />
+	
+	<br/>
+		<p:fieldset legend="Nota!" style="margin-bottom:8px">
+		    <h:panelGrid columns="2" cellpadding="5">
+		    	<h:outputText value="Para pesquisar dados sobre a Pessoa, é necessário informar, o código da Pessoa. Caso, exista será apresentado!" />
+			</h:panelGrid>
+		</p:fieldset>
+	
+	<h:form id="formulario">
+		<p:panel header="Pesquisar Pessoas">
+			<h:panelGrid columns="3">
+				<p:outputLabel for="codigo" value="Código" />
+				<p:inputText id="codigo" size="14" maxlength="14" required="true"
+					requiredMessage="O campo código é obrigatório!"
+					value="#{pessoaBean2.pessoa.codigo}" />
+				<p:commandButton icon="ui-icon-search"
+					update=":mensagem :formulario:painelDados"
+					actionListener="#{pessoaBean2.buscar}" />
+			</h:panelGrid>
+
+			<h:panelGroup id="painelDados" layout="block">
+				<p:panelGrid  columns="2" rendered="${pessoaBean2.exibePainelDados}">
+					<p:outputLabel value="Código: " />
+					<h:outputText value="#{pessoaBean2.pessoa.codigo}" />
+
+					<p:outputLabel value="Nome: " />
+					<h:outputText value="#{pessoaBean2.pessoa.nome}" />
+
+					<p:outputLabel value="CPF: " />
+					<h:outputText value="#{pessoaBean2.pessoa.cpf}" />
+
+					<p:outputLabel value="RG: " />
+					<h:outputText value="#{pessoaBean2.pessoa.id}" />
+
+					<p:outputLabel value="Rua: " />
+					<h:outputText value="#{pessoaBean2.pessoa.rua}" />
+
+					<p:outputLabel value="Numero: " />
+					<h:outputText value="#{pessoaBean2.pessoa.numero}" />
+
+					<p:outputLabel value="Bairro: " />
+					<h:outputText value="#{pessoaBean2.pessoa.bairro}" />
+
+					<p:outputLabel value="Cep: " />
+					<h:outputText value="#{pessoaBean2.pessoa.cep}" />
+
+					<p:outputLabel value="Cidade: " />
+					<h:outputText value="#{pessoaBean2.pessoa.cidade.nome}" />
+
+					<p:outputLabel value="Estado: " />
+					<h:outputText value="#{pessoaBean2.pessoa.cidade.estado.nome}" />
+
+					<p:outputLabel value="Complemento: " />
+					<h:outputText value="#{pessoaBean2.pessoa.complemento}" />
+
+					<p:outputLabel value="Celular: " />
+					<h:outputText value="#{pessoaBean2.pessoa.celular}" />
+
+					<p:outputLabel value="Telefone: " />
+					<h:outputText value="#{pessoaBean2.pessoa.telefone}" />
+
+					<p:outputLabel value="E-mail: " />
+					<h:outputText value="#{pessoaBean2.pessoa.email}" />
+				</p:panelGrid>
+			</h:panelGroup>
+		</p:panel>
+	</h:form>
+</ui:define>
+</ui:composition>

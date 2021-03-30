@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText value="O relatório quantitativo permite informar o total de cada registro no banco de dados!" /><br/>
+		            <h:outputText value="" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		
+		<h:form id="formControle">
+		
+		<p:panel header="Igreja">
+				<h:panelGrid id="painel1" columns="3">
+					<p:outputLabel value="Total de Instituição" />
+					<h:outputText value="#{instituicaoBean.instituicaos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Perfil da Instituição" />
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicaos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Departamento" />
+					<h:outputText value="#{departamentoBean.departamentos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Reunião" />
+					<h:outputText value="#{reuniaoBean.reuniaos.size()}"/>
+					<br/>
+				</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Membresia">
+				<h:panelGrid id="painel2" columns="3">
+					<p:outputLabel value="Total de Membro" />
+					<h:outputText value="#{membroBean.membros.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Escala do Membro" />
+					<h:outputText value="#{escalaBean.escalas.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Candidato a Batismo" />
+					<h:outputText value="#{batismoBean.batismos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Visitante" />
+					<h:outputText value="#{visitanteBean.visitantes.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Evento" />
+					<h:outputText value="#{eventoBean.eventtos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Patrimônio" />
+					<h:outputText value="#{patrimonioBean.patrimonios.size()}"/>
+					<br/>
+				</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Estudo">
+				<h:panelGrid id="painel3" columns="3">
+					<p:outputLabel value="Total de Curso" />
+					<h:outputText value="#{cursoBean.cursos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Professor" />
+					<h:outputText value="#{professorBean.professors.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Disciplina" />
+					<h:outputText value="#{disciplinaBean.disciplinas.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Turma" />
+					<h:outputText value="#{turmaBean.turmas.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Aluno" />
+					<h:outputText value="#{alunoBean.alunos.size()}"/>
+					<br/>
+				</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Cadastro">
+				<h:panelGrid id="painel4" columns="3">
+					<p:outputLabel value="Total de Pessoa" />
+					<h:outputText value="#{pessoaBean.pessoas.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Cliente" />
+					<h:outputText value="#{clienteBean.clientes.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Funcionario" />
+					<h:outputText value="#{funcionarioBean.funcionarios.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Arquivos" />
+					<h:outputText value="#{uploadBean.uploadFiles.size()}"/>
+					<br/>
+				</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Movimentação Venda">
+				<h:panelGrid id="painel5" columns="3">
+					<p:outputLabel value="Total de Estado" />
+					<h:outputText value="#{estadoBean.estados.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Cidade" />
+					<h:outputText value="#{cidadeBean.cidades.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Fabricante" />
+					<h:outputText value="#{fabricanteBean.fabricantes.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Produto" />
+					<h:outputText value="#{produtoBean.produtos.size()}"/>
+					<br/>
+					<p:outputLabel value="Total de Itens da Venda" />
+					<h:outputText value="#{itemVendaBean.itemVendas.size()}"/>
+					<br/>
+				</h:panelGrid>
+		</p:panel>
+		
+		<p:panel header="Controle de Caixa">
+				<h:panelGrid id="painel6" columns="3">
+					<p:outputLabel value="Total Saldo do Caixa: R$" />
+					<h:outputText value="#{saldoCaixaBean.saldoCaixas.stream().map(saldoCaixa->saldoCaixa.saldo).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Total de Entradas: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Total de Saídas: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Saldo do Mês: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum() - controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Sub-total: R$" />
+					<h:outputText value="#{(controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum() - controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()) + saldoCaixaBean.saldoCaixas.stream().map(saldoCaixa->saldoCaixa.saldo).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Quantidade de Entrada e Saída" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.size()}"/>
+					<br/>
+					<f:facet name="footer">
+				        Total de Entradas: #{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum()}
+				        Total de Saídas: #{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}
+				    </f:facet>
+				</h:panelGrid>
+		</p:panel>
+				
+		</h:form>
+
+	</ui:define>
+</ui:decorate>

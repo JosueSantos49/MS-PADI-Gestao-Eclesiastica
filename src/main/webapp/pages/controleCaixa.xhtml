@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" 
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText value="O sistema permite executar controle do caixa de acordo com saldo da entrada e saída." /><br/>
+		            <h:outputText value="Soma do total de todas entradas, mais, a soma do total de todas saídas gera o saldo do mês. O saldo do mês, mais, o saldo do caixa gera o sub-total." />
+		        </h:panelGrid>
+		    </p:fieldset>
+		
+		<h:form id="formControle">
+		
+		<p:panel header="Controle de Caixa">
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Total Saldo do Caixa: R$" />
+					<h:outputText value="#{saldoCaixaBean.saldoCaixas.stream().map(saldoCaixa->saldoCaixa.saldo).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Total de Entradas: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Total de Saídas: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Saldo do Mês: R$" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum() - controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Sub-total: R$" />
+					<h:outputText value="#{(controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum() - controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()) + saldoCaixaBean.saldoCaixas.stream().map(saldoCaixa->saldoCaixa.saldo).sum()}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</h:outputText>
+					<br/>
+					<p:outputLabel value="Quantidade de Entrada e Saída" />
+					<h:outputText value="#{controleCaixaBean.controleCaixas.size()}"/>
+					<br/>
+					<f:facet name="footer">
+				        Total de Entradas: #{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorTotal).sum()}
+				        Total de Saídas: #{controleCaixaBean.controleCaixas.stream().map(controleCaixa->controleCaixa.valorPago).sum()}
+				    </f:facet>
+				</h:panelGrid>
+		</p:panel>
+				
+		</h:form>
+		
+		<ui:remove>
+		<h:form id="formSaldoCaixa">
+			<p:panel header="">
+				<p:dataTable id="tabelaSaldoCaixa" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{saldoCaixaBean.saldoCaixas}" var="saldoCaixa">
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+		</ui:remove>				
+
+		<h:form id="formListagem">
+			<p:panel header="Caixa - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{controleCaixaBean.controleCaixas}" var="controleCaixa"
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<f:facet name="header">
+						
+						<ui:remove>
+						<p:commandButton value="Novo"
+							oncomplete="PF('dialogo').show();"
+							actionListener="#{controleCaixaBean.novo}" update=":formCadastro:painel">
+
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						</ui:remove>						
+										
+						<h:commandButton value="Exportar PDF" actionListener="#{controleCaixaBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{controleCaixaBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{controleCaixaBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{controleCaixaBean.exportarPPT}"/>
+						
+					</f:facet>
+
+					<p:column filterBy="#{controleCaixa.data}" sortBy="#{controleCaixa.data}" headerText="Data">
+						<h:outputText  value="#{controleCaixa.data}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>	
+					</p:column>
+					
+					<p:column headerText="Cód. Doc.">
+						<h:outputText value="#{controleCaixa.codDoc}" />
+					</p:column>
+					
+					<p:column headerText="Descrição">
+						<h:outputText value="#{controleCaixa.descricao}" />
+					</p:column>
+					
+					<p:column headerText="Entradas">
+						<h:outputText value="#{controleCaixa.valorTotal}">
+							<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					
+					<p:column headerText="Saídas">
+						<h:outputText value="#{controleCaixa.valorPago}">
+							<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{controleCaixaBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir?" icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="controleSelecionado" value="#{controleCaixa}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							update=":mensagem :formCadastro:painel"
+							actionListener="#{controleCaixaBean.editar}"
+							oncomplete="PF('dialogo').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="controleSelecionado" value="#{controleCaixa}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="estado" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="estado"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Controle Caixa - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+			
+				<h:panelGrid id="painel" columns="2">
+				
+					<p:outputLabel for="data" value="Data da Conta" />
+					<p:calendar id="data"
+					value="#{controleCaixaBean.controleCaixa.data}" size="10" locale="pt_BR"
+					required="true"
+					requiredMessage="O campo data da conta é obrigatório!" />
+					
+					<p:outputLabel for="codDoc" value="Código do Documento: " />
+					<p:inputText id="codDoc" maxlength="50" size="40" required="true"
+						requiredMessage="O campo código do documento é obrigatório!"
+						value="#{controleCaixaBean.controleCaixa.codDoc}" />
+					
+					<p:outputLabel for="descricao" value="Descrição (Histórico): " />
+					<p:inputText id="descricao" maxlength="50" size="40" required="true"
+						requiredMessage="O campo descrição é obrigatório!"
+						value="#{controleCaixaBean.controleCaixa.descricao}" />
+						
+					<p:outputLabel for="valorTotal" value="Entrada: " />
+					<p:inputText id="valorTotal" maxlength="14" size="10" required="false" disabled="true"
+						requiredMessage="O campo valor pago é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor pago!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor pago'"
+						value="#{controleCaixaBean.controleCaixa.valorTotal}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>
+					
+					<p:outputLabel for="valorPago" value="Saída: " />
+					<p:inputText id="valorPago" maxlength="14" size="10" required="false" disabled="false"
+						requiredMessage="O campo valor pago é obrigatório!"
+						converterMessage="Informe um valor válido para o campo valor pago!"
+						validatorMessage="Informe um valor entre 0.01 e 99999999999.99 para o campo 'valor pago'"
+						value="#{controleCaixaBean.controleCaixa.valorPago}" >
+						
+						<f:validateDoubleRange minimum="0.01" maximum="99999999999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2"/>
+					</p:inputText>					
+				
+					<ui:remove>
+					<p:outputLabel for="entradaDia" value="Entrada do Dia: " />
+					<p:inputText id="entradaDia" maxlength="50" size="40" 
+						value="#{controleCaixaBean.controleCaixa.entradaDia}" />
+
+					<p:outputLabel for="saidaDia" value="Saída do Dia: " />
+					<p:inputText id="saidaDia" maxlength="50" size="40" 
+						value="#{controleCaixaBean.controleCaixa.saidaDia}" />
+						
+					<p:outputLabel for="saldoMes" value="Saldo do Mês: " />
+					<p:inputText id="saldoMes" maxlength="50" size="40" 
+						value="#{controleCaixaBean.controleCaixa.saldoMes}" />
+
+					<p:outputLabel for="saldoCaixa" value="Saldo em Caixa: " />
+					<p:inputText id="saldoCaixa" maxlength="50" size="40" 
+						value="#{controleCaixaBean.controleCaixa.saldoCaixa}" />						
+					</ui:remove>
+							
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+				
+					<p:commandButton value="Salvar"
+						actionListener="#{controleCaixaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar"
+						oncomplete="PF('dialogo').hide();" />
+						
+				</h:panelGrid>
+				
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:decorate>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+	<p:outputPanel id="outputPanelMail">
+		<h:form>
+			<p:panel header="Envio de e-mail" style="width: 1010px">
+				<p:messages />
+				<h:panelGrid columns="2">
+					<h:outputText value="Para: " />
+					<p:inputText value="#{indexController.mensagem.destino}" size="40" 
+					required="true" requiredMessage="O campo 'Para' é obrigatório"/>
+					<h:outputText value="Título: " />
+					<p:inputText value="#{indexController.mensagem.titulo}" size="40" />
+					
+					<h:outputText value="Mensagem: " />										
+					<p:editor value="#{indexController.mensagem.mensagem}" height="350" width="900" style="margin-bottom:15px"/>
+					
+					<ui:remove>
+					<p:inputTextarea value="#{indexController.mensagem.mensagem}"
+						cols="50" rows="8" />
+					</ui:remove>	
+						
+				</h:panelGrid>
+				<p:commandButton value="Enviar e-mail" image="ui-icon-mail-closed"
+					action="#{indexController.enviaEmail}" update="outputPanelMail" />
+				<p:commandButton value="Limpar campos" image="ui-icon-circle-close"
+					action="#{indexController.limpaCampos}" update="outputPanelMail" />
+			</p:panel>
+		</h:form>
+	</p:outputPanel>
+	</ui:define>
+</ui:composition>

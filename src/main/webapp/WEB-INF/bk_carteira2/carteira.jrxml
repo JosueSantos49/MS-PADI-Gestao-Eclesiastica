@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-20T03:59:30 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="carteira" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="496d61ef-5203-4967-bc7a-579790082e5c">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Migreja Data Adapter "/>
+	<parameter name="codigo" class="java.lang.Long"/>
+	<parameter name="arquivo" class="java.io.InputStream" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT * FROM foto WHERE foto.codigo = $P{codigo} LIMIT 1]]>
+	</queryString>
+	<field name="arquivo" class="java.io.InputStream"/>
+	<field name="data_hora" class="java.sql.Timestamp"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="civil" class="java.lang.String"/>
+	<field name="cpf" class="java.lang.String"/>
+	<field name="dtbatismo" class="java.lang.String"/>
+	<field name="dtemissao" class="java.lang.String"/>
+	<field name="dtnascimento" class="java.lang.String"/>
+	<field name="dtordenacao" class="java.lang.String"/>
+	<field name="endereco" class="java.lang.String"/>
+	<field name="filiacao" class="java.lang.String"/>
+	<field name="local" class="java.lang.String"/>
+	<field name="nomemembro" class="java.lang.String"/>
+	<field name="posicao" class="java.lang.String"/>
+	<field name="rg" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="243" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="290" height="125" uuid="b4149225-c8b5-47e2-ba5b-1773edde17fb"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="71" width="290" height="20" uuid="8c041c60-d65d-47fe-ad1f-21015e03d597"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="71" width="290" height="20" backcolor="#00CC00" uuid="b5d281e7-e3fe-48d2-8fd6-8afc572b7098"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="71" width="290" height="20" forecolor="#FFFFFF" uuid="15d1d15f-9d5e-4e27-9a62-1e7c943223dd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[MISSÃO EVANGÉLICA DO BRASIL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="91" width="134" height="14" uuid="bf9bd3b6-f403-4307-a728-33f512721ee1"/>
+				<textFieldExpression><![CDATA[$F{nomemembro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="105" width="66" height="14" uuid="7cef2aa6-5889-4370-8004-5b68c0d26f34"/>
+				<textFieldExpression><![CDATA[$F{dtemissao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="208" y="91" width="78" height="15" uuid="b8915a11-ac5c-4cb6-aa46-81879ad27cc5"/>
+				<text><![CDATA[Data de Emissão]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="41" width="161" height="14" uuid="26e769c1-4a12-4d53-a9a5-ebb9a27df050"/>
+				<textFieldExpression><![CDATA[$F{local}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="105" width="134" height="14" uuid="514c07a2-52c5-45c4-878a-df1b44da6dda"/>
+				<textFieldExpression><![CDATA[$F{posicao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="56" width="63" height="13" uuid="d83d94bb-7c78-4d16-96a6-e588463777aa"/>
+				<textFieldExpression><![CDATA[$F{dtbatismo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="56" width="77" height="13" uuid="c27c38f0-684d-4578-aed5-d05c2c046d61"/>
+				<textElement>
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Data de Batismo:]]></text>
+			</staticText>
+			<image>
+				<reportElement x="209" y="7" width="72" height="59" uuid="3ced4399-a1e8-489f-a9f7-b3d856681f6b"/>
+				<imageExpression><![CDATA[$F{arquivo}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

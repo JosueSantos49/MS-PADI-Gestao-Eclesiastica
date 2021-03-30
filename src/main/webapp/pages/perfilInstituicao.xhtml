@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+			<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Para cadastrar um Perfil será necessário selecionar uma Instituição e Responsável!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+
+		<h:form id="formListagem">
+			<p:panel header="Perfil Instituição - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{perfilInstituicaoBean.perfilInstituicaos}"
+					var="perfilInstituicao" rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{perfilInstituicaoBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<h:commandButton value="Exportar PDF" actionListener="#{perfilInstituicaoBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{perfilInstituicaoBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{perfilInstituicaoBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{perfilInstituicaoBean.exportarPPT}"/>
+							
+					</f:facet>					
+					
+					<p:column headerText="Responsável">
+						<h:outputText value="#{perfilInstituicao.pessoa.nome}" />
+					</p:column>
+
+					<p:column headerText="Instituição"
+						sortBy="#{perfilInstituicao.instituicao.razaosocial}"
+						filterBy="#{perfilInstituicao.instituicao.razaosocial}">
+						<h:outputText value="#{perfilInstituicao.instituicao.razaosocial}" />
+					</p:column>
+					
+					<p:column headerText="Dependências">
+						<h:outputText value="#{perfilInstituicao.dependencia}" />
+					</p:column>
+
+					<p:column headerText="Data Cadastro">
+						<h:outputText value="#{perfilInstituicao.dataCadastro}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{perfilInstituicaoBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="perfilSelecionado"
+								value="#{perfilInstituicao}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{perfilInstituicaoBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="perfilSelecionado"
+								value="#{perfilInstituicao}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{perfilInstituicaoBean.visualizar}"
+							update=":mensagem :formCadastroVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="perfilSelecionado" value="#{perfilInstituicao}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="perfil_Instituicao" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="perfil_Instituicao"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		
+		<!-- form visualizar -->
+		<p:dialog header="Perfil da Instituição - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formCadastroVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">	
+
+					<p:outputLabel value="Instituição: " style="font-weight:bold"/>					
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.instituicao.razaosocial}" />
+					
+					<p:outputLabel value="CNPJ: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.instituicao.cnpj}" />
+										
+					<p:outputLabel value="Fundador: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.instituicao.fundador}" />
+					
+					<p:outputLabel value="Responsável: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.pessoa.nome}" />
+					
+					<p:outputLabel value="Telefone: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.instituicao.telefone}" />
+															
+					<p:outputLabel value="Almoxarifado: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.almoxarifado}" />
+					
+					<p:outputLabel value="Area de Circulação: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.areaCirculacao}" />
+					
+					<p:outputLabel value="Bercario: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.bercario}" />
+					
+					<p:outputLabel value="Dependência: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.dependencia}" />
+					
+					<p:outputLabel value="Refeitório: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.refeitorio}" />
+										
+					<p:outputLabel value="Sala de Adolecente: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaAdolecente}" />
+					
+					<p:outputLabel value="Sala de Novos Convertidos: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaConvertidos}" />
+					
+					<p:outputLabel value="Sala de Jovens: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaJovens}" />
+					
+					<p:outputLabel value="Sala de Leitura: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaLeitura}" />
+					
+					<p:outputLabel value="Sala Temáticos: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaTematicos}" />
+					
+					<p:outputLabel value="Sala de TV: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salaTv}" />
+					
+					<p:outputLabel value="Salão: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.salao}" />
+					
+					<p:outputLabel value="Sanitário: " style="font-weight:bold"/>
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.sanitario}" />
+
+					<p:outputLabel value="Data de Cadastro: " style="font-weight:bold"/>					
+					<h:outputText value="#{perfilInstituicaoBean.perfilInstituicao.dataCadastro}" >
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>		
+					
+					<p:outputLabel value="Observação: " style="font-weight:bold"/>
+					<p:inputTextarea rows="10" cols="80" maxlength="600" size="40" disabled="true"
+						value="#{perfilInstituicaoBean.perfilInstituicao.obs}" />
+					
+				</h:panelGrid>
+				<br/>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form visualizar -->
+
+		<!-- form cadastro -->
+		<p:dialog header="Perfil Instituição - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="4">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{perfilInstituicaoBean.perfilInstituicao.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{perfilInstituicaoBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="pessoa" value="Responsável: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{perfilInstituicaoBean.perfilInstituicao.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{perfilInstituicaoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="dependencia" value="Dependência: " />
+					<p:inputText id="dependencia" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo dependência é obrigatório!"
+						value="#{perfilInstituicaoBean.perfilInstituicao.dependencia}" />
+						
+					<p:outputLabel value="Sala Leitura: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaLeitura}" />
+						
+					<p:outputLabel value="Sala TV: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaTv}" />
+						
+					<p:outputLabel value="Bercário: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.bercario}" />
+
+					<p:outputLabel value="Sala Adolescente: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaAdolecente}" />
+
+					<p:outputLabel value="Sala Jovens: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaJovens}" />
+
+					<p:outputLabel value="Sala Convertidos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaConvertidos}" />
+						
+					<p:outputLabel value="Sala Temáticos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaTematicos}" />
+						
+					<p:outputLabel value="Almoxarifado: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.almoxarifado}" />
+						
+					<p:outputLabel value="Refeitório: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.refeitorio}" />
+
+					<p:outputLabel value="Área de Circulação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.areaCirculacao}" />
+
+					<p:outputLabel value="Sanitário: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.sanitario}" />
+					
+					<p:outputLabel value="Salão: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salao}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{perfilInstituicaoBean.perfilInstituicao.dataCadastro}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+						
+					<p:outputLabel value="Observação: " />
+					<p:inputTextarea rows="5" cols="37" maxlength="600" size="60"
+						value="#{perfilInstituicaoBean.perfilInstituicao.obs}" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{perfilInstituicaoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Perfil Instituição - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="4">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{perfilInstituicaoBean.perfilInstituicao.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{perfilInstituicaoBean.instituicaos}"
+							var="instituicao" itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+					
+					<p:outputLabel for="pessoa" value="Responsável: " />
+					<p:selectOneMenu id="pessoa" filter="true"
+						value="#{perfilInstituicaoBean.perfilInstituicao.pessoa}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo pessoa é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma pessoa" />
+						<f:selectItems value="#{perfilInstituicaoBean.pessoas}" var="pessoa"
+							itemValue="#{pessoa}" itemLabel="#{pessoa.nome} - #{pessoa.cpf}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="dependencia" value="Dependência: " />
+					<p:inputText id="dependencia" maxlength="80" size="40"
+						required="true"
+						requiredMessage="O campo dependência é obrigatório!"
+						value="#{perfilInstituicaoBean.perfilInstituicao.dependencia}" />
+						
+					<p:outputLabel value="Sala Leitura: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaLeitura}" />
+						
+					<p:outputLabel value="Sala TV: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaTv}" />
+						
+					<p:outputLabel value="Bercário: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.bercario}" />
+
+					<p:outputLabel value="Sala Adolescente: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaAdolecente}" />
+
+					<p:outputLabel value="Sala Jovens: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaJovens}" />
+
+					<p:outputLabel value="Sala Convertidos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaConvertidos}" />
+						
+					<p:outputLabel value="Sala Temáticos: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salaTematicos}" />
+						
+					<p:outputLabel value="Almoxarifado: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.almoxarifado}" />
+						
+					<p:outputLabel value="Refeitório: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.refeitorio}" />
+
+					<p:outputLabel value="Área de Circulação: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.areaCirculacao}" />
+
+					<p:outputLabel value="Sanitário: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.sanitario}" />
+					
+					<p:outputLabel value="Salão: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{perfilInstituicaoBean.perfilInstituicao.salao}" />
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{perfilInstituicaoBean.perfilInstituicao.dataCadastro}" size="10"
+						locale="pt_BR" required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+						
+					<p:outputLabel value="Observação: " />
+					<p:inputTextarea rows="5" cols="37" maxlength="600" size="60"
+						value="#{perfilInstituicaoBean.perfilInstituicao.obs}" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{perfilInstituicaoBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar-->
+
+	</ui:define>
+</ui:decorate>

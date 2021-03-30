@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:decorate xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/templates/template.xhtml">
+
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+		
+		<br/>
+			 <p:fieldset legend="Nota!" style="margin-bottom:8px">
+		        <h:panelGrid columns="2" cellpadding="5">
+		            <h:outputText
+		                value="Curso é um termo acadêmico para a duração de uma instrução de certa(s) matéria(s). Para cadastrar o curso será necessário informar a Instituição e o Departamento!" />
+		        </h:panelGrid>
+		    </p:fieldset>
+		    
+		    <p:panel header="Total de Curso">		    	
+				<h:panelGrid id="painelR" columns="3">
+					<p:outputLabel value="Quantidade:" />
+					<h:outputText value="#{cursoBean.cursos.size()}"/>
+				</h:panelGrid>
+			</p:panel>
+
+		<h:form id="formListagem">
+			<p:panel header="Curso - Listagem">
+			
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{cursoBean.cursos}" var="curso" 
+					rows="15" rowsPerPageTemplate="5, 10, 15, 30, 35, 40, 50, 60, 70, 80, 100, 150, 200, 250, 300, 400, 500, 550, 600, 700, 800, 900, 1000"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+					
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus" value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{cursoBean.novo}"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						<ui:remove>	
+							<p:commandButton value="Imprimir" actionListener="#{cursoBean.imprimir}"/>
+						</ui:remove>
+						<h:commandButton value="Exportar PDF" actionListener="#{cursoBean.exportarPDF}"/>
+						<h:commandButton value="Ver PDF" actionListener="#{cursoBean.verPDF}"/>
+						<h:commandButton value="Exportar DOC" actionListener="#{cursoBean.exportarDOC}"/>
+						<h:commandButton value="Exportar PPT" actionListener="#{cursoBean.exportarPPT}"/>	
+						
+					</f:facet>
+
+					<p:column headerText="Instituição"
+						sortBy="#{curso.instituicao.razaosocial}"
+						filterBy="#{curso.instituicao.razaosocial}">
+						<h:outputText value="#{curso.instituicao.razaosocial}" />
+					</p:column>
+
+					<p:column headerText="Departamento">
+						<h:outputText value="#{curso.departamento.nomeDepartamento}" />
+					</p:column>
+					
+					<p:column headerText="Cód. Departamento" sortBy="#{curso.departamento.codigo}"
+						filterBy="#{curso.departamento.codigo}">
+						<h:outputText value="#{curso.departamento.codigo}" />
+					</p:column>
+
+					<p:column headerText="Nome do Curso" sortBy="#{curso.nomeCurso}"
+						filterBy="#{curso.nomeCurso}">
+						<h:outputText value="#{curso.nomeCurso}" />
+					</p:column>
+
+					<p:column headerText="Período Início">
+						<h:outputText value="#{curso.periodoInicio}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Período Termino">
+						<h:outputText value="#{curso.periodoTermino}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Valor Curso">
+						<h:outputText value="#{curso.valorCurso}" />
+					</p:column>
+
+					<p:column headerText="Data Cadastro">
+						<h:outputText value="#{curso.dataCadastro}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções" exportable="false">
+					
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{cursoBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Confirmação" message="Deseja excluir?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="cursoSelecionado" value="#{curso}" />
+						</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+							actionListener="#{cursoBean.novoEditar}"
+							update=":mensagem :formEditar:painelEditar"
+							oncomplete="PF('dialogoEditar').show();">
+							<p:confirm header="Confirmação" message="Deseja editar?"
+								icon="ui-icon-alert"></p:confirm>
+							<f:attribute name="cursoSelecionado" value="#{curso}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+						<p:commandButton icon="ui-icon-circle-zoomout"
+							actionListener="#{cursoBean.visualizar}"
+							update=":mensagem :formVisualizar:painelVisualizar"
+							oncomplete="PF('dialogoVisualizar').show();">							
+							<f:attribute name="cursoSelecionado" value="#{curso}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+						
+					</p:column>
+				</p:dataTable>
+				
+				<br />
+
+				<h:commandLink>
+					<p:graphicImage name="/images/excel.png" width="24" />
+					<p:dataExporter type="xls" target="tabela" fileName="curso" />
+				</h:commandLink>
+
+				<h:commandLink>
+					<p:graphicImage name="/images/pdf.png" width="24" />
+					<p:dataExporter type="pdf" target="tabela" fileName="curso"
+						encoding="iso-8859-1" />
+				</h:commandLink>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+		<!-- Form visualizar -->
+		<p:dialog header="Curso - Visualizar" widgetVar="dialogoVisualizar"
+			draggable="true" resizable="false" modal="true">
+			<h:form id="formVisualizar" enctype="multipart/form-data">
+			<br/>
+				<h:panelGrid id="painelVisualizar" columns="2">
+				
+					<p:outputLabel value="Instituição: " style="font-weight:bold"/>									
+					<h:outputText value="#{cursoBean.curso.instituicao.razaosocial}" />					
+
+					<p:outputLabel value="Departamento: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.departamento.nomeDepartamento}" />					
+					
+					<p:outputLabel value="Especialidade: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.especialidade}" />				
+
+					<p:outputLabel value="Curso: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.nomeCurso}" />					
+
+					<p:outputLabel value="Valor: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.valorCurso}" />			
+					
+					<p:outputLabel value="Início: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.periodoInicio}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+					
+					<p:outputLabel value="Término: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.periodoTermino}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				
+					<p:outputLabel value="Data do curso: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.valorCurso}" />
+
+					<p:outputLabel value="Data de cadastro: " style="font-weight:bold"/>
+					<h:outputText value="#{cursoBean.curso.dataCadastro}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+					
+				</h:panelGrid>
+				<br/>
+				<h:panelGrid columns="2">					
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoVisualizar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- Form visualizar -->
+
+		<!-- form cadastro -->
+		<p:dialog header="Curso - Cadastro" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{cursoBean.curso.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{cursoBean.instituicaos}" var="instituicao"
+							itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="departamento" value="Departamento: " />
+					<p:selectOneMenu id="departamento" filter="true"
+						value="#{cursoBean.curso.departamento}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo departamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um departamento" />
+						<f:selectItems value="#{cursoBean.departamentos}"
+							var="departamento" itemValue="#{departamento}"
+							itemLabel="#{departamento.nomeDepartamento} - #{departamento.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Nome do curso: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{cursoBean.curso.nomeCurso}" />
+
+					<p:outputLabel for="periodoInicio" value="Período de Início" />
+					<p:calendar id="periodoInicio"
+						value="#{cursoBean.curso.periodoInicio}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo período de início é obrigatório!" />
+
+					<p:outputLabel for="periodoTermino" value="Período de Termino" />
+					<p:calendar id="periodoTermino"
+						value="#{cursoBean.curso.periodoTermino}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo período de termino é obrigatório!" />
+
+					<p:outputLabel value="Especialidade: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{cursoBean.curso.especialidade}" />
+
+					<p:outputLabel for="preco" value="Valor do Investimento: " />
+					<p:inputText id="preco" maxlength="7" size="10" required="true"
+						requiredMessage="O campo valor do curso é obrigatório!"
+						converterMessage="Informe um valor válido para o campo preço!"
+						validatorMessage="Informe um valor entre 0.01 e 9999.99 para o campo 'Preço'"
+						value="#{cursoBean.curso.valorCurso}">
+
+						<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{cursoBean.curso.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar" icon="icon-ok"
+						actionListener="#{cursoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form cadastro -->
+		
+		<!-- form editar -->
+		<p:dialog header="Curso - Editar" widgetVar="dialogoEditar"
+			draggable="false" resizable="false" modal="true">
+			<h:form id="formEditar">
+				<h:panelGrid id="painelEditar" columns="2">
+
+					<p:outputLabel for="instituicao" value="Instituição: " />
+					<p:selectOneMenu id="instituicao" filter="true"
+						value="#{cursoBean.curso.instituicao}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo instituição é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione uma instituição" />
+						<f:selectItems value="#{cursoBean.instituicaos}" var="instituicao"
+							itemValue="#{instituicao}"
+							itemLabel="#{instituicao.razaosocial} - #{instituicao.cnpj}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel for="departamento" value="Departamento: " />
+					<p:selectOneMenu id="departamento" filter="true"
+						value="#{cursoBean.curso.departamento}"
+						converter="omnifaces.SelectItemsConverter" required="true"
+						requiredMessage="O campo departamento é obrigatório!">
+						<f:selectItem itemValue="" itemLabel="Selecione um departamento" />
+						<f:selectItems value="#{cursoBean.departamentos}"
+							var="departamento" itemValue="#{departamento}"
+							itemLabel="#{departamento.nomeDepartamento} - #{departamento.codigo}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Nome do curso: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{cursoBean.curso.nomeCurso}" />
+
+					<p:outputLabel for="periodoInicio" value="Período de Início" />
+					<p:calendar id="periodoInicio"
+						value="#{cursoBean.curso.periodoInicio}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo período de início é obrigatório!" />
+
+					<p:outputLabel for="periodoTermino" value="Período de Termino" />
+					<p:calendar id="periodoTermino"
+						value="#{cursoBean.curso.periodoTermino}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo período de termino é obrigatório!" />
+
+					<p:outputLabel value="Especialidade: " />
+					<p:inputText maxlength="80" size="40"
+						value="#{cursoBean.curso.especialidade}" />
+
+					<p:outputLabel for="preco" value="Valor do Investimento: " />
+					<p:inputText id="preco" maxlength="7" size="10" required="true"
+						requiredMessage="O campo valor do curso é obrigatório!"
+						converterMessage="Informe um valor válido para o campo preço!"
+						validatorMessage="Informe um valor entre 0.01 e 9999.99 para o campo 'Preço'"
+						value="#{cursoBean.curso.valorCurso}">
+
+						<f:validateDoubleRange minimum="0.01" maximum="9999.99" />
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" />
+					</p:inputText>
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro" />
+					<p:calendar id="dataCadastro"
+						value="#{cursoBean.curso.dataCadastro}" size="10" locale="pt_BR"
+						required="true"
+						requiredMessage="O campo data de cadastro é obrigatório!" />
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Editar" icon="icon-ok"
+						actionListener="#{cursoBean.editar}"
+						update=":mensagem :formEditar:painelEditar :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEditar').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		<!-- form editar -->
+
+	</ui:define>
+</ui:decorate>
